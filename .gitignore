@@ -5,4 +5,5 @@ target
 /.classpath
 /.project
 /.settings
+lib/.DS_Store
 /RUNNING_PID

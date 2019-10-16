@@ -2,11 +2,11 @@
 # This file defines all application routes (Higher priority routes first)
 # ~~~~
 
-# Controller for Sudoku
-
-GET     /                           controllers.SudokuController.sudoku
-
-GET     /about                      controllers.SudokuController.about
+# Controller for Mill
+GET     /                           controllers.MillController.mill
+GET     /board                      controllers.MillController.mill
+GET     /about                      controllers.MillController.about
+GET     /players                    controllers.MillController.addPlayer
 
 
 # Map static resources from the /public folder to the /assets URL path
