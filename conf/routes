@@ -3,10 +3,14 @@
 # ~~~~
 
 # Controller for Mill
-GET     /                           controllers.MillController.mill
-GET     /board                      controllers.MillController.mill
-GET     /about                      controllers.MillController.about
-GET     /players                    controllers.MillController.addPlayer
+GET     /                                   controllers.MillController.mill
+GET     /board                              controllers.MillController.mill
+GET     /about                              controllers.MillController.about
+GET     /players/:playerOne/:playerTwo      controllers.MillController.addPlayer(playerOne: String, playerTwo: String)
+GET     /start                              controllers.MillController.startGame
+GET     /place/:field                       controllers.MillController.place(field: Int)
+GET     /move/:startField/:targetField      controllers.MillController.move(startField: Int, targetField: Int)
+GET     /fly/:startField/:targetField       controllers.MillController.fly(startField: Int, targetField: Int)
 
 
 # Map static resources from the /public folder to the /assets URL path

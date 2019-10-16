@@ -9,6 +9,9 @@ import de.htwg.se.NineMensMorris.controller.controllerComponent
 class MillController @Inject()(cc: ControllerComponents) extends AbstractController(cc) {
   val gameController = NineMensMorris.controller
   def millAsText =  gameController.gameboardToString
+  def playerOnTurn = gameController.playerOnTurn.toString
+  def BoardAndPlayer = millAsText + playerOnTurn
+
 
   def about= Action {
     Ok(views.html.index())
@@ -17,9 +20,35 @@ class MillController @Inject()(cc: ControllerComponents) extends AbstractControl
   def mill = Action {
     Ok(millAsText)
   }
-  def addPlayer = Action {
-    Ok(views.html.players())
+  def addPlayer(playerOne: String, playerTwo: String) = Action {
+    //gameController.addPlayer(playerOne,playerTwo)
+    Ok(BoardAndPlayer + gameController.playerWhite.toString + gameController.playerBlack.toString)
   }
 
+  def startGame = Action {
+    gameController.startNewGame()
+    Ok(BoardAndPlayer)
+  }
+
+  def place(field: Int) = Action {
+    gameController.placeMan(field)
+    gameController.checkMill(field)
+    gameController.changePlayerOnTurn()
+    Ok(BoardAndPlayer)
+  }
+
+  def move(startField: Int, targetField: Int) = Action {
+    gameController.moveMan(startField, targetField)
+    gameController.checkMill(targetField)
+    gameController.changePlayerOnTurn()
+    Ok(BoardAndPlayer)
+  }
+
+  def fly(startField: Int, targetField: Int) = Action {
+    gameController.flyMan(startField, targetField)
+    gameController.checkMill(targetField)
+    gameController.changePlayerOnTurn()
+    Ok(BoardAndPlayer)
+  }
 
 }
