@@ -18,7 +18,7 @@ class MillController @Inject()(cc: ControllerComponents) extends AbstractControl
   }
 
   def mill = Action {
-    Ok(millAsText)
+    Ok(views.html.mill(gameController))
   }
   def addPlayer(playerOne: String, playerTwo: String) = Action {
     //gameController.addPlayer(playerOne,playerTwo)
