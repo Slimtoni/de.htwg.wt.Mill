@@ -2,53 +2,53 @@ package controllers
 
 import javax.inject._
 import play.api.mvc._
-import de.htwg.se.NineMensMorris.{NineMensMorris, NineMensMorrisModule}
-import de.htwg.se.NineMensMorris.controller.controllerComponent
+import de.htwg.se.NineMensMorris.NineMensMorris
+import de.htwg.se.NineMensMorris.controller.controllerComponent.controllerBaseImpl.ControllerMill
 
 @Singleton
 class MillController @Inject()(cc: ControllerComponents) extends AbstractController(cc) {
-  val gameController = NineMensMorris.controller
-  def millAsText =  gameController.gameboardToString
-  def playerOnTurn = gameController.playerOnTurn.toString
-  def BoardAndPlayer = millAsText + playerOnTurn
+  val gameController: ControllerMill = NineMensMorris.controller
+  def millAsText: String =  gameController.gameboardToString
+  def playerOnTurn: String = gameController.playerOnTurn.toString
+  def BoardAndPlayer: String = millAsText + playerOnTurn
 
 
-  def about= Action {
+  def about: Action[AnyContent] = Action {
     Ok(views.html.index())
   }
 
-  def mill = Action {
+  def mill: Action[AnyContent] = Action {
     Ok(views.html.mill(gameController))
   }
-  def addPlayer(playerOne: String, playerTwo: String) = Action {
+  def addPlayer(playerOne: String, playerTwo: String): Action[AnyContent] = Action {
     //gameController.addPlayer(playerOne,playerTwo)
     Ok(BoardAndPlayer + gameController.playerWhite.toString + gameController.playerBlack.toString)
   }
 
-  def startGame = Action {
+  def startGame: Action[AnyContent] = Action {
     gameController.startNewGame()
-    Ok(BoardAndPlayer)
+    Ok(views.html.mill(gameController))
   }
 
-  def place(field: Int) = Action {
+  def place(field: Int): Action[AnyContent] = Action {
     gameController.placeMan(field)
     gameController.checkMill(field)
     gameController.changePlayerOnTurn()
-    Ok(BoardAndPlayer)
+    Ok(views.html.mill(gameController))
   }
 
-  def move(startField: Int, targetField: Int) = Action {
+  def move(startField: Int, targetField: Int): Action[AnyContent] = Action {
     gameController.moveMan(startField, targetField)
     gameController.checkMill(targetField)
     gameController.changePlayerOnTurn()
-    Ok(BoardAndPlayer)
+    Ok(views.html.mill(gameController))
   }
 
-  def fly(startField: Int, targetField: Int) = Action {
+  def fly(startField: Int, targetField: Int): Action[AnyContent] = Action {
     gameController.flyMan(startField, targetField)
     gameController.checkMill(targetField)
     gameController.changePlayerOnTurn()
-    Ok(BoardAndPlayer)
+    Ok(views.html.mill(gameController))
   }
 
 }
