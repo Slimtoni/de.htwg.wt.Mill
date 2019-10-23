@@ -51,4 +51,8 @@ class MillController @Inject()(cc: ControllerComponents) extends AbstractControl
     Ok(BoardAndPlayer)
   }
 
+  def rules = Action {
+    Ok(views.html.rules())
+  }
+
 }
