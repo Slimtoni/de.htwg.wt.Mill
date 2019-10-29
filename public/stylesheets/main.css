@@ -6,27 +6,47 @@
     font-size:40px;
     font-family: "Verdana",Geneva, sans-serif;
     font-weight: bold;
-    color:black;
+    color: black;
 }
 .game {
     border-style: inset;
     border-width: 0.05em;
     border-spacing: 0px;
     border-color: #00023d;
-    background-color: #88a5ff;
+    background-color: sandybrown;
     padding: 0.05em;
     margin:auto;
-    width: auto;
+    height: 40vw;
+    width: 40vw;
+
 }
 
 .field {
     display: inline-block; /* switch to none if candidates should show*/
-    width: 100%;
-    height: 100%;
+    border-radius: 50%;
+    width: 1.2em;
+    height: 1.2em;
+    background-color: beige;
+}
+
+.row1 .field{
+
+}
+
+.row2 {
+
+}
+
+.row3 {
+
+}
+
+.row4 {
+
 }
 
 .white {
-    background-color: beige;
+    background-color: white;
 }
 
 .black {
@@ -34,7 +54,7 @@
 }
 
 .empty {
-    background-color: white;
+    background-color: beige;
 }
 
 .clear {
