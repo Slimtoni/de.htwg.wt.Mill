@@ -13,6 +13,12 @@
             else "empty"
     }
 }
+@fieldType(field: Int) = @{
+    if((field >= 0 && field < 3) || (field >= 21 & field < 24)) "row1"
+    else if ((field >= 3 && field < 6) || (field >= 18 & field < 21)) "row2"
+    else if ((field >= 6 && field < 9) || (field >= 15 & field < 18)) "row3"
+    else "row4"
+}
 
 @main("Nine Mens Morris") {
     <link rel="stylesheet" href='@routes.Assets.versioned("stylesheets/main.css")' />
@@ -24,7 +30,7 @@
             <!--@{ Html.apply(board) }-->
             <br>
             @for(index <- 0 until size) {
-                <div class="@{"field " + fieldStatus(index)}">
+                <div class="@{"field " + fieldStatus(index) + " " + fieldType(index)}">
                     @list(index)
                 </div>
                 @if(index == 2 || index == 5 || index == 8 || index == 14 ||
