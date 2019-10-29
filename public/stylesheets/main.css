@@ -8,18 +8,12 @@
     font-weight: bold;
     color: black;
 }
-.game {
-    border-style: inset;
-    border-width: 0.05em;
-    border-spacing: 0px;
-    border-color: #00023d;
-    background-color: #f4f3ec;
-    padding: 0.05em;
-    margin:auto;
-    height: 40vw;
-    width: 40vw;
 
+.svg {
+    display: block;
+    margin: auto;
 }
+
 
 .field {
 
