@@ -1,0 +1,42 @@
+.gamecontainer {
+    height: 100%;
+    width: 100%;
+    margin: 1em;
+    display:flex;
+    font-size:40px;
+    font-family: "Verdana",Geneva, sans-serif;
+    font-weight: bold;
+    color:black;
+}
+.game {
+    border-style: inset;
+    border-width: 0.05em;
+    border-spacing: 0px;
+    border-color: #00023d;
+    background-color: #88a5ff;
+    padding: 0.05em;
+    margin:auto;
+    width: auto;
+}
+
+.field {
+    display: inline-block; /* switch to none if candidates should show*/
+    width: 100%;
+    height: 100%;
+}
+
+.white {
+    background-color: beige;
+}
+
+.black {
+    background-color: black;
+}
+
+.empty {
+    background-color: white;
+}
+
+.clear {
+    clear: both;
+}
