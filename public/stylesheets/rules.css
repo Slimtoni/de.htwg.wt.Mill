@@ -1,0 +1,25 @@
+.container {
+    margin: auto;
+    width: 50%;
+    padding: 10px;
+}
+
+.box {
+    background-color: #efecef;
+    padding: 1em;
+
+}
+
+#img {
+    display: block;
+    margin: auto;
+}
+
+h3 {
+    color: #e05435;
+}
+
+h1 {
+    text-align: center;
+    color: #333333;
+}
