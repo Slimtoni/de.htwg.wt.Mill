@@ -1,5 +1,5 @@
 
-name := """Sudoku in Scala for WebTech"""
+name := """Mill in Scala for WebTech"""
 
 version := "1.2"
 
