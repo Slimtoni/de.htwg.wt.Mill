@@ -7,6 +7,7 @@
     font-family: "Verdana",Geneva, sans-serif;
     font-weight: bold;
     color: black;
+    margin-top: 10px;
 }
 .jumbotron {
     background-color: #EFECEF;
@@ -20,6 +21,15 @@
 .svg {
     display: block;
     margin: auto;
+}
+
+.navbar {
+    background-color: lightgrey;
+    border: 2px solid;
+    margin-top: 10px;
+    margin-bottom: 5px;
+    border-radius: 10px;
+
 }
 
 .page-header {

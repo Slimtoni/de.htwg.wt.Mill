@@ -1,3 +1,10 @@
+.navbar {
+    background-color: lightgrey;
+    border: 2px solid;
+    border-radius: 10px;
+
+}
+
 .container {
     margin: auto;
     width: 50%;
@@ -13,6 +20,25 @@
 #img {
     display: block;
     margin: auto;
+}
+
+.btn-link{
+    color: #e05435;
+}
+.btn-link:hover{
+    color: #5CBBB7;
+}
+.card {
+    margin-top: 5px;
+    margin-bottom: 5px;
+    border-radius: 10px;
+}
+
+a {
+    color: #e05435;
+}
+a:hover{
+    color: #5CBBB7;
 }
 
 h3 {
