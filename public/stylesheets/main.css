@@ -1,0 +1,65 @@
+.gamecontainer {
+    width: 800px;
+    display:flex;
+    font-size:40px;
+    font-family: "Verdana",Geneva, sans-serif;
+    font-weight: bold;
+    color: black;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+.jumbotron {
+    background-color: #EFECEF;
+    border-radius: 10px;
+    border: 1px solid;
+}
+
+.btn-primary {
+    background-color: #e05435;
+    border: #e05435;
+}
+
+.svg {
+    display: block;
+    margin: auto;
+}
+
+.navbar {
+    background-color: lightgrey;
+    border: 2px solid;
+    margin-top: 10px;
+    margin-bottom: 5px;
+    border-radius: 10px;
+
+}
+
+.page-header {
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: 50% 100%;
+    display: block;
+    padding-bottom: 10px;
+}
+
+
+.navbar-light .navbar-nav .nav-link:hover{
+    color: #5CBBB7;
+}
+
+.white {
+    background-color: white;
+    color: black;
+}
+
+.black {
+    background-color: black;
+    color: white;
+}
+
+.empty {
+    #background-color: beige;
+}
+
+.clear {
+    clear: both;
+}

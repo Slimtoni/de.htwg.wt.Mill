@@ -1,29 +1,85 @@
 
+@import de.htwg.se.NineMensMorris.model.FieldStatus
 @(controller:de.htwg.se.NineMensMorris.controller.controllerComponent.ControllerInterface)
 @board= @{ controller.gameboardToString.replaceAll("[\\r\\n]","<br>").replaceAll(" ","&nbsp;&nbsp;") }
 @currentPlayer= @{ controller.playerOnTurn }
 @size = @{ controller.getVertexList.size }
 @list = @{ controller.getVertexList }
+@fieldStatus(field: Int) = @{
+    controller.getField(field) match {
+        case Some(value) =>
+            if (value.fieldStatus == FieldStatus.White) "white"
+            else if(value.fieldStatus == FieldStatus.Black) "black"
+            else "empty"
+    }
+}
+@fieldType(field: Int) = @{
+    if((field >= 0 && field < 3) || (field >= 21 & field < 24)) "row1"
+    else if ((field >= 3 && field < 6) || (field >= 18 & field < 21)) "row2"
+    else if ((field >= 6 && field < 9) || (field >= 15 & field < 18)) "row3"
+    else "row4"
+}
 
 @main("Nine Mens Morris") {
-    <h1>Welcome to Nine Mens Morris!</h1>
-    <div class="gamecontainer">
-        <div class="game">
-            <!--@{ Html.apply(board) }-->
-            <br>
-            @for(index <- 0 until size) {
-                    <span class="field index@index">
-                        @list(index)
-                        @if(index == 2 || index == 5 || index == 8 || index == 14 ||
-                                index == 17 || index == 20 || index == 23) {
-                            <br>
-                        }
-                    </span>
-            }
+    <link rel="stylesheet" href='@routes.Assets.versioned("stylesheets/main.css")' />
+    <script src='@routes.Assets.versioned("javascripts/bootstrap.min.js")'> </script>
+    <header class="page-header">
+
+        <div class="container">
+            @navbar()
+            <div class="jumbotron header-jumbotron d-flex flex-column justify-content-center align-items-center">
+                <h1 class="display-4">Welcome to Nine Mens Morris!</h1>
+                <h2 class="display-6"> @{ currentPlayer } </h2>
+                <a class="btn btn-primary" href="/start" role="button">Start game</a>
+            </div>
+            <section class="game">
+            <div class="align-content-center">
+                <svg class="svg" width="650" height="650" viewBox="0 0 650 650" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect width="650" height="650" fill="#EB5B38"/>
+                    <rect x="30" y="30" width="292" height="292" fill="black"/>
+                    <rect x="330" y="330" width="292" height="292" fill="black"/>
+                    <rect x="30" y="331" width="292" height="292" fill="black"/>
+                    <rect x="330" y="30" width="292" height="292" fill="black"/>
+                    <rect x="128" y="128" width="396" height="396" fill="black"/>
+                    <rect x="128" y="128" width="194" height="194" fill="#5CBBB7"/>
+                    <rect x="330" y="330" width="194" height="194" fill="#5CBBB7"/>
+                    <rect x="330" y="128" width="194" height="194" fill="#FFDE63"/>
+                    <rect x="128" y="330" width="194" height="194" fill="#FFDE63"/>
+                    <rect x="227" y="223" width="200" height="200" fill="black"/>
+                    <rect class="field" id="field0" x="10" y="10" width="40" height="40" fill="white"/>
+                    <rect class="field" id="field1" x="305" y="10" width="40" height="40" fill="white"/>
+                    <rect class="field" id="field2" x="599" y="10" width="40" height="40" fill="white"/>
+                    <rect class="field" id="field3" x="107" y="109" width="40" height="40" fill="white"/>
+                    <rect class="field" id="field4" x="305" y="109" width="40" height="40" fill="white"/>
+                    <rect class="field" id="field5" x="502" y="109" width="40" height="40" fill="white"/>
+                    <rect class="field" id="field6" x="207" y="208" width="40" height="40" fill="white"/>
+                    <rect class="field" id="field7" x="305" y="206" width="40" height="40" fill="white"/>
+                    <rect class="field" id="field8" x="404" y="207" width="40" height="40" fill="white"/>
+                    <rect class="field" id="field9" x="10" y="305" width="40" height="40" fill="white"/>
+                    <rect class="field" id="field10" x="107" y="305" width="40" height="40" fill="white"/>
+                    <rect class="field" id="field11" x="206" y="305" width="40" height="40" fill="white"/>
+                    <rect class="field" id="field12" x="404" y="305" width="40" height="40" fill="white"/>
+                    <rect class="field" id="field13" x="502" y="305" width="40" height="40" fill="white"/>
+                    <rect class="field" id="field14" x="599" y="305" width="40" height="40" fill="white"/>
+                    <rect class="field" id="field15" x="207" y="404" width="40" height="40" fill="white"/>
+                    <rect class="field" id="field16" x="305" y="405" width="40" height="40" fill="white"/>
+                    <rect class="field" id="field17" x="404" y="403" width="40" height="40" fill="white"/>
+                    <rect class="field" id="field18" x="107" y="504" width="40" height="40" fill="white"/>
+                    <rect class="field" id="field19" x="305" y="504" width="40" height="40" fill="white"/>
+                    <rect class="field" id="field20" x="502" y="504" width="40" height="40" fill="white"/>
+                    <rect class="field" id="field21" x="10" y="600" width="40" height="40" fill="white"/>
+                    <rect class="field" id="field22" x="305" y="602" width="40" height="40" fill="white"/>
+                    <rect class="field" id="field23" x="599" y="602" width="40" height="40" fill="white"/>
+                    <path d="M258.605 315.938L263.059 329.859L267.512 315.938H270.277V333H268.133V326.355L268.332 319.699L263.867 333H262.227L257.785 319.746L257.984 326.355V333H255.84V315.938H258.605ZM296.152 315.938V328.066C296.137 329.684 295.668 330.949 294.746 331.863C293.824 332.777 292.539 333.234 290.891 333.234C289.203 333.234 287.914 332.789 287.023 331.898C286.133 331 285.68 329.723 285.664 328.066V315.938H287.797V327.984C287.797 329.133 288.039 329.992 288.523 330.562C289.016 331.125 289.805 331.406 290.891 331.406C291.984 331.406 292.773 331.125 293.258 330.562C293.75 329.992 293.996 329.133 293.996 327.984V315.938H296.152ZM319.637 325.113H313.602V331.16H320.633V333H311.457V315.938H320.516V317.789H313.602V323.273H319.637V325.113ZM346.555 333H344.398V325.113H337.531V333H335.387V315.938H337.531V323.273H344.398V315.938H346.555V333ZM364.426 331.16H371.117V333H362.27V315.938H364.426V331.16ZM393.863 325.113H387.828V331.16H394.859V333H385.684V315.938H394.742V317.789H387.828V323.273H393.863V325.113Z" fill="white"/>
+                </svg>
+            </div>
+            </section>
+
         </div>
-        <div class="playerOnTurn">
-            <br>
-            @{ currentPlayer }
-        </div>
-    </div>
+
+    </header>
+    <body>
+        @footer()
+    </body>
+
 }
