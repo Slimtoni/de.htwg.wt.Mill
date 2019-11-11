@@ -12,6 +12,7 @@ GET     /place/:field                       controllers.MillController.place(fie
 GET     /move/:startField/:targetField      controllers.MillController.move(startField: Int, targetField: Int)
 GET     /fly/:startField/:targetField       controllers.MillController.fly(startField: Int, targetField: Int)
 GET     /rules                              controllers.MillController.rules
+GET     /player                             controllers.MillController.playerOnTurnAPI
 
 
 # Map static resources from the /public folder to the /assets URL path

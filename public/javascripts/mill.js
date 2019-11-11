@@ -1,21 +1,53 @@
-function place(field) {
-    field.attr("xlink:href", "#white");
+function place(field, player) {
+    if (player === "White"){
+        field.attr("xlink:href", "#white");
+    } else if (player==="Black"){
+        field.attr("xlink:href", "#black");
+    }
 }
 
-function move(field1, field2) {
-    field1.attr("fill", "white");
-    field2.attr("fill", "black")
+function move(field1, field2, player) {
+    if (player === "Black") {
+        field1.attr("xlink:href", "#empty");
+        field2.attr("xlink:href", "#black");
+    } else if (player === "White"){
+        field1.attr("xlink:href", "#empty");
+        field2.attr("xlink:href", "#white");
+    }
 }
 
-function fly(field1, field2) {
-    field1.attr("fill", "white");
-    field2.attr("fill", "black")
+function fly(field1, field2, player) {
+    if (player === "Black") {
+        field1.attr("xlink:href", "#empty");
+        field2.attr("xlink:href", "#black");
+    } else if (player === "White"){
+        field1.attr("xlink:href", "#empty");
+        field2.attr("xlink:href", "#white");
+    }
+
+}
+
+function loadPlayer() {
+    return new Promise(resolve => {
+        $.get("/player").done(data => {
+            resolve(data);
+        });
+    });
 
 }
 
 $(document).ready(function () {
-    $('.field').click(function () {
+    $('.field').click(async function () {
+        let player = await loadPlayer();
+        console.log(player);
         console.log($(this).attr("id"));
-        place($(this));
+        if (player.phase === "Place"){
+            place($(this), player.player)
+        } else if (player.phase === "Move"){
+            move($(this), player.player)
+        } else if (player.phase === "Fly"){
+            fly($(this), player.player)
+        }
+
     });
 });
