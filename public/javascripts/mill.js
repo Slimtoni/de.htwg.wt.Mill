@@ -36,6 +36,10 @@ function loadPlayer() {
 
 }
 
+function changePlayer(){
+    $.get("turn")
+}
+
 $(document).ready(function () {
     $('.field').click(async function () {
         let player = await loadPlayer();
@@ -48,6 +52,7 @@ $(document).ready(function () {
         } else if (player.phase === "Fly"){
             fly($(this), player.player)
         }
+        changePlayer()
 
     });
 });

@@ -28,9 +28,9 @@ class MillController @Inject()(cc: ControllerComponents) extends AbstractControl
     Ok(views.html.mill(gameController))
   }
 
-  def addPlayer(playerOne: String, playerTwo: String): Action[AnyContent] = Action {
-    //gameController.addPlayer(playerOne,playerTwo)
-    Ok(BoardAndPlayer + gameController.playerWhite.toString + gameController.playerBlack.toString)
+  def changePlayer: Action[AnyContent] = Action {
+    gameController.changePlayerOnTurn();
+    Ok(views.html.mill(gameController))
   }
 
   def playerOnTurnAPI(): Action[AnyContent] = Action {

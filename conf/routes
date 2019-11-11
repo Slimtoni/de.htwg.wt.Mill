@@ -6,14 +6,13 @@
 GET     /                                   controllers.MillController.mill
 GET     /board                              controllers.MillController.mill
 GET     /about                              controllers.MillController.about
-GET     /players/:playerOne/:playerTwo      controllers.MillController.addPlayer(playerOne: String, playerTwo: String)
 GET     /start                              controllers.MillController.startGame
 GET     /place/:field                       controllers.MillController.place(field: Int)
 GET     /move/:startField/:targetField      controllers.MillController.move(startField: Int, targetField: Int)
 GET     /fly/:startField/:targetField       controllers.MillController.fly(startField: Int, targetField: Int)
 GET     /rules                              controllers.MillController.rules
 GET     /player                             controllers.MillController.playerOnTurnAPI
-
+GET     /turn                               controllers.MillController.changePlayer
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)
