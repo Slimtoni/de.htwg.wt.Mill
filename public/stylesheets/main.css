@@ -10,24 +10,6 @@
     margin-bottom: 10px;
 }
 
-#cross{
-    background: #037CA9;
-    width: 33px;
-    height: 100px;
-    position: relative;
-    margin-left: 33px;
-    transform: rotate(45deg);
-}
-
-#cross:before{
-    background: #037CA9;
-    content: "";
-    width: 100px;
-    height: 33px;
-    position: absolute;
-    top: 33px;
-    left: -33px;
-}
 
 .jumbotron {
     background-color: #EFECEF;
@@ -38,6 +20,9 @@
 .btn-primary {
     background-color: #e05435;
     border: #e05435;
+}
+.btn-primary:hover{
+    background-color: #5CBBB7;
 }
 
 .svg {
