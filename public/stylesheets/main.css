@@ -9,6 +9,26 @@
     margin-top: 10px;
     margin-bottom: 10px;
 }
+
+#cross{
+    background: #037CA9;
+    width: 33px;
+    height: 100px;
+    position: relative;
+    margin-left: 33px;
+    transform: rotate(45deg);
+}
+
+#cross:before{
+    background: #037CA9;
+    content: "";
+    width: 100px;
+    height: 33px;
+    position: absolute;
+    top: 33px;
+    left: -33px;
+}
+
 .jumbotron {
     background-color: #EFECEF;
     border-radius: 10px;
@@ -52,10 +72,22 @@
     color: black;
 }
 
+.white::after{
+    background: #037CA9;
+    width: 33px;
+    height: 100px;
+    position: relative;
+    margin-left: 33px;
+    transform: rotate(45deg);
+
+}
+
 .black {
     background-color: black;
     color: white;
 }
+
+
 
 .empty {
     #background-color: beige;
