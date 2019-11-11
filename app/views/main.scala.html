@@ -15,6 +15,7 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/bootstrap.min.css")" >
+        <link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/main.css")" >
         <script src="@routes.Assets.versioned("javascripts/bootstrap.min.js")" ></script>
 
         <link rel="shortcut icon" type="image/png" href="@routes.Assets.versioned("images/favicon.png")">
@@ -25,5 +26,6 @@
         @* And here's where we render the `Html` object containing
          * the page content. *@
         @content
+        @footer()
     </body>
 </html>

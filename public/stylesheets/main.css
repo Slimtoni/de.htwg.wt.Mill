@@ -1,3 +1,4 @@
+/*Game*/
 .gamecontainer {
     width: 800px;
     display:flex;
@@ -62,4 +63,108 @@
 
 .clear {
     clear: both;
+}
+
+/*Footer*/
+.footer {
+    clear: both;
+    position: relative;
+    left: 0;
+    width: 100%;
+    height: 100px;
+    background-color: #e05435;
+    color: white;
+    text-align: center;
+    margin-top: 50px;
+}
+
+h5 {
+    margin-top: 10px;
+    text-transform: uppercase;
+    font-weight: bold;
+
+}
+
+.container-fluid {
+    text-align: left;
+}
+
+/*Navbar*/
+.navbar {
+    background-color: lightgrey;
+    border: 2px solid;
+    margin-top: 10px;
+    margin-bottom: 5px;
+    border-radius: 10px;
+    width: 100%;
+
+
+}
+
+.navbar-light .navbar-nav .nav-link:hover{
+    color: #5CBBB7;
+}
+.container {
+    width: 800px;
+}
+
+/*Rules*/
+.navbar {
+    background-color: lightgrey;
+    border: 2px solid;
+    border-radius: 10px;
+}
+
+.container {
+    margin: auto;
+    width: 50%;
+    padding: 10px;
+}
+
+.box {
+    background-color: #efecef;
+    padding: 1em;
+    margin-bottom: 10px;
+    margin-top: 10px;
+    border-radius: 10px;
+    border: 1px solid
+
+}
+
+.navbar-light .navbar-nav .nav-link:hover{
+    color: #5CBBB7;
+}
+
+#img {
+    display: block;
+    margin: auto;
+}
+
+.btn-link{
+    color: #e05435;
+}
+.btn-link:hover{
+    color: #5CBBB7;
+}
+.card {
+    margin-top: 5px;
+    margin-bottom: 5px;
+    border-radius: 10px;
+    border: 0.5px solid
+}
+
+a {
+    color: #e05435;
+}
+a:hover{
+    color: #5CBBB7;
+}
+
+h3 {
+    color: #e05435;
+}
+
+h1 {
+    text-align: center;
+    color: #333333;
 }

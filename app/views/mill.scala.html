@@ -21,18 +21,15 @@
 }
 
 @main("Nine Mens Morris") {
-    <link rel="stylesheet" href='@routes.Assets.versioned("stylesheets/main.css")' />
-    <script src='@routes.Assets.versioned("javascripts/bootstrap.min.js")'> </script>
-    <header class="page-header">
-
         <div class="container">
             @navbar()
-            <div class="jumbotron header-jumbotron d-flex flex-column justify-content-center align-items-center">
-                <h1 class="display-4">Welcome to Nine Mens Morris!</h1>
-                <h2 class="display-6"> @{ currentPlayer } </h2>
-                <a class="btn btn-primary" href="/start" role="button">Start game</a>
-            </div>
-            <section class="game">
+
+        <div class="jumbotron header-jumbotron d-flex flex-column justify-content-center align-items-center">
+            <h1 class="display-4">Welcome to Nine Mens Morris!</h1>
+            <h2 class="display-6"> @{ currentPlayer } </h2>
+            <a class="btn btn-primary" href="/start" role="button">Start game</a>
+        </div>
+        <section class="game">
             <div class="align-content-center">
                 <svg class="svg" width="650" height="650" viewBox="0 0 650 650" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <rect width="650" height="650" fill="#EB5B38"/>
@@ -73,13 +70,8 @@
                     <path d="M258.605 315.938L263.059 329.859L267.512 315.938H270.277V333H268.133V326.355L268.332 319.699L263.867 333H262.227L257.785 319.746L257.984 326.355V333H255.84V315.938H258.605ZM296.152 315.938V328.066C296.137 329.684 295.668 330.949 294.746 331.863C293.824 332.777 292.539 333.234 290.891 333.234C289.203 333.234 287.914 332.789 287.023 331.898C286.133 331 285.68 329.723 285.664 328.066V315.938H287.797V327.984C287.797 329.133 288.039 329.992 288.523 330.562C289.016 331.125 289.805 331.406 290.891 331.406C291.984 331.406 292.773 331.125 293.258 330.562C293.75 329.992 293.996 329.133 293.996 327.984V315.938H296.152ZM319.637 325.113H313.602V331.16H320.633V333H311.457V315.938H320.516V317.789H313.602V323.273H319.637V325.113ZM346.555 333H344.398V325.113H337.531V333H335.387V315.938H337.531V323.273H344.398V315.938H346.555V333ZM364.426 331.16H371.117V333H362.27V315.938H364.426V331.16ZM393.863 325.113H387.828V331.16H394.859V333H385.684V315.938H394.742V317.789H387.828V323.273H393.863V325.113Z" fill="white"/>
                 </svg>
             </div>
-            </section>
-
+        </section>
         </div>
 
-    </header>
-    <body>
-        @footer()
-    </body>
 
 }
