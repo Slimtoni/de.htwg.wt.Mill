@@ -3,12 +3,16 @@ package controllers
 import de.htwg.se.NineMensMorris.NineMensMorris
 import de.htwg.se.NineMensMorris.controller.controllerComponent.controllerBaseImpl.ControllerMill
 import javax.inject._
+import play.api.Logger
 import play.api.libs.json._
 import play.api.mvc._
+import play.filters.csrf.AddCSRFToken
+import views.html.helper.CSRF
 
 
 @Singleton
 class MillController @Inject()(cc: ControllerComponents) extends AbstractController(cc) {
+
   val gameController: ControllerMill = NineMensMorris.controller
 
   def millAsText: String = gameController.gameboardToString
@@ -19,18 +23,13 @@ class MillController @Inject()(cc: ControllerComponents) extends AbstractControl
 
   def BoardAndPlayer: String = millAsText + playerOnTurn
 
-
-  def about: Action[AnyContent] = Action {
-    Ok(views.html.index())
-  }
-
-  def mill: Action[AnyContent] = Action {
+  def mill: Action[AnyContent] = Action { implicit request =>
     Ok(views.html.mill(gameController))
   }
 
   def changePlayer: Action[AnyContent] = Action {
     gameController.changePlayerOnTurn();
-    Ok(views.html.mill(gameController))
+    Ok("")
   }
 
   def playerOnTurnAPI(): Action[AnyContent] = Action {
@@ -40,34 +39,19 @@ class MillController @Inject()(cc: ControllerComponents) extends AbstractControl
     Ok(json)
   }
 
-  def startGame: Action[AnyContent] = Action {
-    gameController.startNewGame()
-    Ok(views.html.mill(gameController))
+  def performTurn = Action(parse.json) { implicit request =>
+    gameController.performTurn((request.body \ "start").as[Int], (request.body \ "target").as[Int])
+    Ok(request.body)
   }
 
-  def place(field: Int): Action[AnyContent] = Action {
-    gameController.placeMan(field)
-    gameController.checkMill(field)
-    gameController.changePlayerOnTurn()
-    Ok(views.html.mill(gameController))
-  }
+    def startGame(): Action[AnyContent] = Action { implicit request =>
+      val token = CSRF.getToken.value
+      gameController.startNewGame()
+      Ok(views.html.mill(gameController))
+    }
 
-  def move(startField: Int, targetField: Int): Action[AnyContent] = Action {
-    gameController.moveMan(startField, targetField)
-    gameController.checkMill(targetField)
-    gameController.changePlayerOnTurn()
-    Ok(views.html.mill(gameController))
-  }
+    def rules: Action[AnyContent] = Action { implicit request =>
+      Ok(views.html.rules(gameController))
+    }
 
-  def fly(startField: Int, targetField: Int): Action[AnyContent] = Action {
-    gameController.flyMan(startField, targetField)
-    gameController.checkMill(targetField)
-    gameController.changePlayerOnTurn()
-    Ok(views.html.mill(gameController))
   }
-
-  def rules = Action {
-    Ok(views.html.rules())
-  }
-
-}
