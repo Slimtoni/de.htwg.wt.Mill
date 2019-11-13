@@ -5,8 +5,8 @@ import de.htwg.se.NineMensMorris.controller.controllerComponent.controllerBaseIm
 import javax.inject._
 import play.api.Logger
 import play.api.libs.json._
+import
 import play.api.mvc._
-import play.filters.csrf.AddCSRFToken
 import views.html.helper.CSRF
 
 
@@ -41,7 +41,7 @@ class MillController @Inject()(cc: ControllerComponents) extends AbstractControl
 
   def performTurn = Action(parse.json) { implicit request =>
     gameController.performTurn((request.body \ "start").as[Int], (request.body \ "target").as[Int])
-    Ok(request.body)
+    Ok("")
   }
 
     def startGame(): Action[AnyContent] = Action { implicit request =>
