@@ -28,23 +28,29 @@ function move(field1, field2, player) {
 
 function performTurn(startField, targetField) {
     if (targetField === undefined) {
-        $.ajax({
-            type: 'POST',
-            url: '/turn',
-            data: JSON.stringify({
-                start: startField,
-                target: -1
-            })
-        }).done(data => {
-            resolve(data);
-            if (data === 200) {
+        return new Promise(resolve => {
+            $.ajax({
+                type: 'POST',
+                url: '/turn',
+                data: JSON.stringify({
+                    start: startField,
+                    target: -1
+                })
+            }).done(data => {
+                resolve(data);
                 console.log(data);
-                place(startField);
-            } else if (data === 400) {
-                console.log(data);
-                console.log("Unallowed turn");
-            }
+                if (data === 200) {
+                    console.log("data " + data);
+                    place(startField);
+                } else if (data === 400) {
+                    console.log(data);
+                    console.log("Unallowed turn");
+                }
+            }).fail(function () {
+                console.log("fail");
+            });
         });
+
     } else {
         $.ajax({
             type: 'POST',
@@ -77,11 +83,11 @@ $(document).ready(function () {
         let startField = parseInt($(this).attr("id").slice(5, 7));
         let player = await loadPlayer();
         if (player.phase === "Place") {
-            performTurn(startField)
+            await performTurn(startField)
         } else if (player.phase === "Move" || player.phase === "Fly") {
             $('.field').click(function () {
                 let targetField = parseInt($(this).attr("id").slice(5, 7));
-                performTurn(startField, $(this))
+                performTurn(startField, targetField);
             })
         }
         $('#currentPlayer').text(player.player);
