@@ -34,15 +34,14 @@ class MillController @Inject()(cc: ControllerComponents) extends AbstractControl
   }
 
   def playerOnTurnAPI(): Action[AnyContent] = Action {
-    val json: JsValue = Json.obj(
+    val json: JsValue = Json.obj (
       "player" -> playerOnTurn,
       "phase" -> playerPhase)
     Ok(json)
   }
 
-  def performTurn: Action[AnyContent] = Action { implicit request =>
-    request.body.asJson.map { json =>
-      json.validate[(Int, Int)].map {
+  def performTurn: Action[JsValue] = Action(parse.json) { implicit request =>
+      request.body.validate[(Int, Int)].map {
         case (start, target) => {
           val err = gameController.performTurn(start, target)
           err match {
@@ -51,11 +50,8 @@ class MillController @Inject()(cc: ControllerComponents) extends AbstractControl
           }
         }
       }.recoverTotal {
-        e => Status(400)("Detected error: " + JsError.toFlatForm(e))
+        e => Status(401)("Detected error: " + JsError.toFlatForm(e))
       }
-    }.getOrElse {
-      Status(400)("Expecting Json data")
-    }
   }
 
     def startGame(): Action[AnyContent] = Action { implicit request =>
