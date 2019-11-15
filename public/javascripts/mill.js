@@ -36,9 +36,12 @@ function performTurn(startField, targetField) {
                 target: -1
             })
         }).done(data => {
+            resolve(data);
             if (data === 200) {
+                console.log(data);
                 place(startField);
             } else if (data === 400) {
+                console.log(data);
                 console.log("Unallowed turn");
             }
         });
@@ -71,12 +74,13 @@ function loadPlayer() {
 
 $(document).ready(function () {
     $('.field').click(async function () {
-        let startField = $(this);
+        let startField = parseInt($(this).attr("id").slice(5, 7));
         let player = await loadPlayer();
         if (player.phase === "Place") {
             performTurn(startField)
         } else if (player.phase === "Move" || player.phase === "Fly") {
             $('.field').click(function () {
+                let targetField = parseInt($(this).attr("id").slice(5, 7));
                 performTurn(startField, $(this))
             })
         }
