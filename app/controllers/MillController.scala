@@ -50,7 +50,7 @@ class MillController @Inject()(cc: ControllerComponents) extends AbstractControl
           }
         }
       }.recoverTotal {
-        e => Status(401)("Detected error: " + JsError.toFlatForm(e))
+        e => BadRequest("Detected error: " + JsError.toFlatForm(e))
       }
   }
 
