@@ -5,7 +5,6 @@ import de.htwg.se.NineMensMorris.NineMensMorris
 import de.htwg.se.NineMensMorris.controller.controllerComponent.controllerBaseImpl.ControllerMill
 import de.htwg.se.NineMensMorris.controller.controllerComponent.Error
 import javax.inject._
-import play.api.Logger
 import play.api.libs.json._
 import play.api.mvc._
 import views.html.helper.CSRF
@@ -18,19 +17,14 @@ class MillController @Inject()(cc: ControllerComponents) extends AbstractControl
 
   def millAsText: String = gameController.gameboardToString
 
-  def playerOnTurn: String = gameController.playerOnTurn.toString
+  def playerOnTurn: String = gameController.getPlayerOnTurn
 
-  def playerPhase: String = gameController.playerOnTurn.phase.toString;
+  def playerPhase: String = gameController.getPlayerOnTurnPhase;
 
   def BoardAndPlayer: String = millAsText + playerOnTurn
 
   def mill: Action[AnyContent] = Action { implicit request =>
     Ok(views.html.mill(gameController))
-  }
-
-  def changePlayer: Action[AnyContent] = Action {
-    gameController.changePlayerOnTurn();
-    Ok("")
   }
 
   def playerOnTurnAPI(): Action[AnyContent] = Action {
@@ -46,17 +40,11 @@ class MillController @Inject()(cc: ControllerComponents) extends AbstractControl
       case Error.NoError => Ok("200")
       case default => Status(400)("Detected error: " + Error.errorMessage(err))
     }
-      /*request.body.validate[(Int, Int)].map {
-        case (start, target) => {
-          val err = gameController.performTurn(start, target)
-          err match {
-            case Error.NoError => Ok("200")
-            case default => Status(400)("Detected error: " + Error.errorMessage(err))
-          }
-        }
-      }.recoverTotal {
-        e => BadRequest("Detected error: " + JsError.toFlatForm(e))
-      }*/
+  }
+
+  def endPlayersTurn: Action[AnyContent] = Action {
+    gameController.endPlayersTurn()
+    Ok("")
   }
 
     def startGame(): Action[AnyContent] = Action { implicit request =>
@@ -68,5 +56,4 @@ class MillController @Inject()(cc: ControllerComponents) extends AbstractControl
     def rules: Action[AnyContent] = Action { implicit request =>
       Ok(views.html.rules(gameController))
     }
-
   }

@@ -9,12 +9,12 @@ $.ajaxSetup({
 });
 
 function place(field, player) {
-    console.log("Player: " + player.player)
+    console.log("Player: " + player.player);
     if (player.player === "White") {
-        console.log("place White Stone!")
+        console.log("place White Stone!");
         field.attr("xlink:href", "#white");
     } else if (player.player === "Black") {
-        console.log("place Black Stone!")
+        console.log("place Black Stone!");
         field.attr("xlink:href", "#black");
     }
 }
@@ -51,6 +51,7 @@ function performTurn(startField, targetField, player) {
                 } else {
                     console.log("data " + data);
                     place(startField, player);
+                    endPlayersTurn();
                 }
             }).fail(function () {
                 console.log("fail");
@@ -69,11 +70,20 @@ function performTurn(startField, targetField, player) {
         }).done(data => {
             if (data === 200) {
                 move(startField, targetField, player);
+                endPlayersTurn();
             } else if (data === 400) {
                 console.log("Unallowed turn");
             }
         });
     }
+}
+
+function endPlayersTurn() {
+    return new Promise(resolve => {
+        $.get("/end").done(data => {
+            resolve(data);
+        });
+    });
 }
 
 function loadPlayer() {
@@ -82,13 +92,13 @@ function loadPlayer() {
             resolve(data);
         });
     });
-
 }
 
 $(document).ready(function () {
     $('.field').click(async function () {
         let startField = $(this);
         let player = await loadPlayer();
+        console.log("Current Player: " + player.player);
         if (player.phase === "Place") {
             await performTurn(startField,undefined, player)
         } else if (player.phase === "Move" || player.phase === "Fly") {
