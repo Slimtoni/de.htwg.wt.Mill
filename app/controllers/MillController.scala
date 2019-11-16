@@ -41,7 +41,12 @@ class MillController @Inject()(cc: ControllerComponents) extends AbstractControl
   }
 
   def performTurn: Action[JsValue] = Action(parse.json) { implicit request =>
-      request.body.validate[(Int, Int)].map {
+    val err = gameController.performTurn((request.body \ "start").as[Int], (request.body \ "target").as[Int])
+    err match {
+      case Error.NoError => Ok("200")
+      case default => Status(400)("Detected error: " + Error.errorMessage(err))
+    }
+      /*request.body.validate[(Int, Int)].map {
         case (start, target) => {
           val err = gameController.performTurn(start, target)
           err match {
@@ -51,7 +56,7 @@ class MillController @Inject()(cc: ControllerComponents) extends AbstractControl
         }
       }.recoverTotal {
         e => BadRequest("Detected error: " + JsError.toFlatForm(e))
-      }
+      }*/
   }
 
     def startGame(): Action[AnyContent] = Action { implicit request =>
