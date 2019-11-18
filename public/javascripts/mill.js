@@ -47,6 +47,8 @@ function performTurn(startField, targetField, player) {
                     if (data === "400") {
                         console.log(data);
                         console.log("Unallowed turn");
+                    } else {
+                        console.log("An error occured");
                     }
                 } else {
                     console.log("data " + data);
@@ -54,7 +56,7 @@ function performTurn(startField, targetField, player) {
                     endPlayersTurn();
                 }
             }).fail(function () {
-                console.log("fail");
+                console.log("Cant perform turn");
             });
         });
 
@@ -74,6 +76,8 @@ function performTurn(startField, targetField, player) {
             } else if (data === 400) {
                 console.log("Unallowed turn");
             }
+        }).fail(function () {
+            console.log("Cant perform turn");
         });
     }
 }
@@ -82,6 +86,8 @@ function endPlayersTurn() {
     return new Promise(resolve => {
         $.get("/end").done(data => {
             resolve(data);
+        }).fail (function () {
+            console.log("Cant end the turn");
         });
     });
 }
@@ -91,7 +97,7 @@ function loadPlayer() {
         $.get("/player").done(data => {
             resolve(data);
         }).fail(function () {
-            console.log("Start the game first");
+            console.log("Cant load player - Start the game first");
             resolve(undefined);
         });
     });
@@ -112,6 +118,8 @@ $(document).ready(function () {
                 })
             }
             $('#currentPlayer').text(player.player);
+        } else {
+            console.log("Player is undefiend - Start the game");
         }
     });
 });

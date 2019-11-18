@@ -28,7 +28,7 @@ class MillController @Inject()(cc: ControllerComponents) extends AbstractControl
   }
 
   def playerOnTurnAPI(): Action[AnyContent] = Action {
-    if (gameController.getPlayerOnTurn != null) {
+    if (playerOnTurn != null) {
       val json: JsValue = Json.obj(
         "player" -> playerOnTurn,
         "phase" -> playerPhase)
@@ -52,7 +52,6 @@ class MillController @Inject()(cc: ControllerComponents) extends AbstractControl
   }
 
     def startGame(): Action[AnyContent] = Action { implicit request =>
-      val token = CSRF.getToken.value
       gameController.startNewGame()
       Ok(views.html.mill(gameController))
     }
