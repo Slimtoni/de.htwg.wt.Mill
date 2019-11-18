@@ -90,6 +90,9 @@ function loadPlayer() {
     return new Promise(resolve => {
         $.get("/player").done(data => {
             resolve(data);
+        }).fail(function () {
+            console.log("Start the game first");
+            resolve(undefined);
         });
     });
 }
@@ -98,16 +101,17 @@ $(document).ready(function () {
     $('.field').click(async function () {
         let startField = $(this);
         let player = await loadPlayer();
-        console.log("Current Player: " + player.player);
-        if (player.phase === "Place") {
-            await performTurn(startField,undefined, player)
-        } else if (player.phase === "Move" || player.phase === "Fly") {
-            $('.field').click(function () {
-                let targetField = $(this);
-                performTurn(startField, targetField, player);
-            })
+        if (player !== undefined) {
+            console.log("Current Player: " + player.player);
+            if (player.phase === "Place") {
+                await performTurn(startField, undefined, player)
+            } else if (player.phase === "Move" || player.phase === "Fly") {
+                $('.field').click(function () {
+                    let targetField = $(this);
+                    performTurn(startField, targetField, player);
+                })
+            }
+            $('#currentPlayer').text(player.player);
         }
-        $('#currentPlayer').text(player.player);
-
     });
 });

@@ -28,10 +28,14 @@ class MillController @Inject()(cc: ControllerComponents) extends AbstractControl
   }
 
   def playerOnTurnAPI(): Action[AnyContent] = Action {
-    val json: JsValue = Json.obj (
-      "player" -> playerOnTurn,
-      "phase" -> playerPhase)
-    Ok(json)
+    if (gameController.getPlayerOnTurn != null) {
+      val json: JsValue = Json.obj(
+        "player" -> playerOnTurn,
+        "phase" -> playerPhase)
+      Ok(json)
+    } else {
+      Status(400)
+    }
   }
 
   def performTurn: Action[JsValue] = Action(parse.json) { implicit request =>
