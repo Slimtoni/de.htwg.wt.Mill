@@ -1,6 +1,6 @@
 
 @import de.htwg.se.NineMensMorris.model.FieldStatus
-@(controller:de.htwg.se.NineMensMorris.controller.controllerComponent.ControllerInterface)
+@(controller:de.htwg.se.NineMensMorris.controller.controllerComponent.ControllerInterface)(implicit request: RequestHeader)
 @board= @{ controller.gameboardToString.replaceAll("[\\r\\n]","<br>").replaceAll(" ","&nbsp;&nbsp;") }
 @currentPlayer= @{ controller.playerOnTurn }
 @size = @{ controller.getVertexList.size }
@@ -23,10 +23,9 @@
 @main("Nine Mens Morris") {
         <div class="container">
             @navbar()
-
         <div class="jumbotron header-jumbotron d-flex flex-column justify-content-center align-items-center">
             <h1 class="display-4">Welcome to Nine Mens Morris!</h1>
-            <h2 class="display-6"> @{ currentPlayer } </h2>
+            <h2 class="display-6" id="currentPlayer"> @currentPlayer </h2>
             <a class="btn btn-primary" href="/start" role="button">Start game</a>
         </div>
         <section class="game">
@@ -76,6 +75,4 @@
             </div>
         </section>
         </div>
-
-
 }

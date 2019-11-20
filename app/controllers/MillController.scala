@@ -1,73 +1,62 @@
 package controllers
 
+import com.fasterxml.jackson.databind.JsonNode
 import de.htwg.se.NineMensMorris.NineMensMorris
 import de.htwg.se.NineMensMorris.controller.controllerComponent.controllerBaseImpl.ControllerMill
+import de.htwg.se.NineMensMorris.controller.controllerComponent.Error
 import javax.inject._
 import play.api.libs.json._
 import play.api.mvc._
+import views.html.helper.CSRF
 
 
 @Singleton
 class MillController @Inject()(cc: ControllerComponents) extends AbstractController(cc) {
+
   val gameController: ControllerMill = NineMensMorris.controller
 
   def millAsText: String = gameController.gameboardToString
 
-  def playerOnTurn: String = gameController.playerOnTurn.toString
+  def playerOnTurn: String = gameController.getPlayerOnTurn
 
-  def playerPhase: String = gameController.playerOnTurn.phase.toString;
+  def playerPhase: String = gameController.getPlayerOnTurnPhase;
 
   def BoardAndPlayer: String = millAsText + playerOnTurn
 
-
-  def about: Action[AnyContent] = Action {
-    Ok(views.html.index())
-  }
-
-  def mill: Action[AnyContent] = Action {
-    Ok(views.html.mill(gameController))
-  }
-
-  def changePlayer: Action[AnyContent] = Action {
-    gameController.changePlayerOnTurn();
+  def mill: Action[AnyContent] = Action { implicit request =>
     Ok(views.html.mill(gameController))
   }
 
   def playerOnTurnAPI(): Action[AnyContent] = Action {
-    val json: JsValue = Json.obj(
-      "player" -> playerOnTurn,
-      "phase" -> playerPhase)
-    Ok(json)
+    if (playerOnTurn != null) {
+      val json: JsValue = Json.obj(
+        "player" -> playerOnTurn,
+        "phase" -> playerPhase)
+      Ok(json)
+    } else {
+      Status(400)
+    }
   }
 
-  def startGame: Action[AnyContent] = Action {
-    gameController.startNewGame()
-    Ok(views.html.mill(gameController))
+  def performTurn: Action[JsValue] = Action(parse.json) { implicit request =>
+    val err = gameController.performTurn((request.body \ "start").as[Int], (request.body \ "target").as[Int])
+    err match {
+      case Error.NoError => Ok("200")
+      case default => Status(400)("Detected error: " + Error.errorMessage(err))
+    }
   }
 
-  def place(field: Int): Action[AnyContent] = Action {
-    gameController.placeMan(field)
-    gameController.checkMill(field)
-    gameController.changePlayerOnTurn()
-    Ok(views.html.mill(gameController))
+  def endPlayersTurn: Action[AnyContent] = Action {
+    gameController.endPlayersTurn()
+    Ok("")
   }
 
-  def move(startField: Int, targetField: Int): Action[AnyContent] = Action {
-    gameController.moveMan(startField, targetField)
-    gameController.checkMill(targetField)
-    gameController.changePlayerOnTurn()
-    Ok(views.html.mill(gameController))
-  }
+    def startGame(): Action[AnyContent] = Action { implicit request =>
+      gameController.startNewGame()
+      Ok(views.html.mill(gameController))
+    }
 
-  def fly(startField: Int, targetField: Int): Action[AnyContent] = Action {
-    gameController.flyMan(startField, targetField)
-    gameController.checkMill(targetField)
-    gameController.changePlayerOnTurn()
-    Ok(views.html.mill(gameController))
+    def rules: Action[AnyContent] = Action { implicit request =>
+      Ok(views.html.rules(gameController))
+    }
   }
-
-  def rules = Action {
-    Ok(views.html.rules())
-  }
-
-}
