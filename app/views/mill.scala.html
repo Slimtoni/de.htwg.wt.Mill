@@ -1,4 +1,3 @@
-
 @import de.htwg.se.NineMensMorris.model.FieldStatus
 @(controller:de.htwg.se.NineMensMorris.controller.controllerComponent.ControllerInterface)(implicit request: RequestHeader)
 @board= @{ controller.gameboardToString.replaceAll("[\\r\\n]","<br>").replaceAll(" ","&nbsp;&nbsp;") }

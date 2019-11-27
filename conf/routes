@@ -11,6 +11,8 @@ GET     /player                             controllers.MillController.playerOnT
 GET     /end                                controllers.MillController.endPlayersTurn
 +nocsrf
 POST    /turn                               controllers.MillController.performTurn
++nocsrf
+POST    /checkMill                          controllers.MillController.checkMill
 
 GET     /websocket                          controllers.MillController.socket
 

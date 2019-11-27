@@ -1,4 +1,7 @@
 let csrf = $('input[name="csrfToken"]').attr("name");
+let foundMill = false
+let firstClick = true
+let clickOne = 0
 
 $.ajaxSetup({
     headers: {
@@ -65,6 +68,12 @@ function performTurn(startField, targetField, player) {
             }).done(data => {
                 resolve(data);
                 console.log(data);
+                if(checkMill(startField)) {
+                    //alert("Mill");
+                } else {
+                    //alert("No Mill")
+                }
+
                 if (data !== "200") {
                     if (data === "400") {
                         console.log(data);
@@ -81,7 +90,6 @@ function performTurn(startField, targetField, player) {
                 console.log("Cant perform turn");
             });
         });
-
     } else {
         let targetID = parseInt($(targetField).attr("id").slice(5, 7));
         $.ajax({
@@ -102,6 +110,29 @@ function performTurn(startField, targetField, player) {
             console.log("Cant perform turn");
         });
     }
+}
+
+function checkMill(field) {
+    let fieldID = parseInt($(field).attr("id").slice(5, 7));
+    return new Promise( resolve => {
+        $.ajax({
+            type: 'POST',
+            url: '/checkMill',
+            data: JSON.stringify({
+                field: fieldID
+            })
+        }).done(data => {
+            console.log("Received checkMill status: " + data)
+            if (data === "true") {
+                foundMill = true
+            } else if (data === "false") {
+                foundMill = false
+            }
+        }).fail( function () {
+            console.log("Failed to check Mill");
+            resolve(undefined);
+        })
+    })
 }
 
 function endPlayersTurn() {
@@ -131,14 +162,22 @@ $(document).ready(function () {
         let startField = $(this);
         let player = await loadPlayer();
         if (player !== undefined) {
-            console.log("Current Player: " + player.player);
-            if (player.phase === "Place") {
-                await performTurn(startField, undefined, player)
-            } else if (player.phase === "Move" || player.phase === "Fly") {
-                $('.field').click(function () {
-                    let targetField = $(this);
-                    performTurn(startField, targetField, player);
-                })
+            console.log("Clicked Field: " + startField + " - Current Player: " + player.player +
+                            "Found Mill status: " + foundMill);
+            if (!foundMill) {
+                if (player.phase === "Place") {
+                    await performTurn(startField, undefined, player)
+                    await checkMill(startField)
+                    if(!foundMill) {
+                        endPlayersTurn()
+                    }
+                } else if (player.phase === "Move" || player.phase === "Fly") {
+                    $('.field').click(function () {
+                        let targetField = $(this);
+                        performTurn(startField, targetField, player);
+                    })
+                }
+                $('#currentPlayer').text(player.player);
             }
             $('#currentPlayer').text(player.player);
         } else {

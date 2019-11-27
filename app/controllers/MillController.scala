@@ -66,6 +66,15 @@ class MillController @Inject()(cc: ControllerComponents)(implicit system: ActorS
     }
   }
 
+  def checkMill: Action[JsValue] = Action(parse.json) { implicit request =>
+    val mill = gameController.checkMill((request.body \ "field").as[Int])
+    mill match {
+      case true => Ok("true")
+      case false => Ok("false")
+      case _ => Status(400)("Undefined return Type")
+    }
+  }
+
   def endPlayersTurn: Action[AnyContent] = Action {
     gameController.endPlayersTurn()
     Ok("")
