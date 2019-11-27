@@ -8,6 +8,28 @@ $.ajaxSetup({
     }
 });
 
+function connectWebSocket() {
+    let websocket = new WebSocket("ws://localhost:9000/websocket");
+    websocket.setTimeout;
+
+    websocket.onopen = function (event) {
+        console.log("Connected to Socket");
+    };
+
+    websocket.onclose = function (event) {
+        console.log("Connection closed");
+    };
+
+    websocket.onerror = function (error) {
+        console.log(error);
+    };
+
+    websocket.onmessage = function (event) {
+        if (typeof event.data === "string") {
+        }
+    }
+}
+
 function place(field, player) {
     console.log("Player: " + player.player);
     if (player.player === "White") {
@@ -86,7 +108,7 @@ function endPlayersTurn() {
     return new Promise(resolve => {
         $.get("/end").done(data => {
             resolve(data);
-        }).fail (function () {
+        }).fail(function () {
             console.log("Cant end the turn");
         });
     });
@@ -104,6 +126,7 @@ function loadPlayer() {
 }
 
 $(document).ready(function () {
+    connectWebSocket();
     $('.field').click(async function () {
         let startField = $(this);
         let player = await loadPlayer();
