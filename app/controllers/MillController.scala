@@ -47,6 +47,19 @@ class MillController @Inject()(cc: ControllerComponents)(implicit system: ActorS
     Ok(views.html.mill(gameController))
   }
 
+  def getField: Action[JsValue] = Action(parse.json) { implicit request =>
+    val field = gameController.getField((request.body \ "field").as[Int])
+    field match {
+      case Some(value) => {
+        val json: JsValue = Json.obj(
+          "fieldStatus" -> value.fieldStatus
+        )
+        Ok(json)
+      }
+      case None => Status(400)
+    }
+  }
+
 
   def playerOnTurnAPI(): Action[AnyContent] = Action {
     if (playerOnTurn != null) {
@@ -82,6 +95,14 @@ class MillController @Inject()(cc: ControllerComponents)(implicit system: ActorS
       case true => Ok("true")
       case false => Ok("false")
       case _ => Status(400)("Undefined return Type")
+    }
+  }
+
+  def caseOfMill: Action[JsValue] = Action(parse.json) { implicit request =>
+    val err = gameController.caseOfMill((request.body \ "field").as[Int])
+    err match {
+      case Error.NoError => Ok("200")
+      case _ => Status(400)("Detected error: " + Error.errorMessage(err))
     }
   }
 
