@@ -18,7 +18,7 @@ $.ajaxSetup({
 
 async function updateField(field) {
     getFieldStatus(field).done(data => {
-        console.log(data.fieldStatus)
+        console.log(data.fieldStatus);
         if (data.fieldStatus === "White") {
             field.attr("xlink:href", "#white");
         } else if (data.fieldStatus === "Black") {
@@ -31,6 +31,17 @@ async function updateField(field) {
     });
     //console.log("Change fieldStatus to " + ajax.data.fieldStatus);
 
+}
+
+function getBoard(){
+    return new Promise(resolve => {
+        $.get("/board").done(data => {
+            resolve(data);
+        }).fail(function () {
+            console.log("Cant load board");
+            resolve(undefined);
+        });
+    });
 }
 
 
@@ -61,6 +72,7 @@ function performTurn(startField, targetField, player) {
             start: startID,
             target: -1
         }));
+
         /*return new Promise(resolve => {
             $.ajax({
                 type: 'POST',
@@ -158,9 +170,9 @@ function caseOfMill(field) {
             field: fieldID
         })
     }).done(data => {
-        console.log("Received caseOfMill status: " + data)
+        console.log("Received caseOfMill status: " + data);
         if (data === "200") {
-            foundMill = true
+            foundMill = true;
             killMan(field)
         } else {
             console.log(data)
@@ -222,7 +234,8 @@ function connectWebSocket() {
                 }
             } else {
                 console.log("data " + event.data);
-                place(startField, player);
+                updateField(startField);
+
                 endPlayersTurn();
             }
         }
@@ -231,6 +244,7 @@ function connectWebSocket() {
 
 $(document).ready(function () {
     connectWebSocket();
+    getBoard();
     $('.field').click(async function () {
 
         startField = $(this);
@@ -243,7 +257,9 @@ $(document).ready(function () {
             if (!foundMill) {
                 if (player.phase === "Place") {
                     await performTurn(startField, undefined, player);
+                    await updateField(startField);
                     await checkMill(startField);
+
 
                     if (!foundMill) {
                         endPlayersTurn()

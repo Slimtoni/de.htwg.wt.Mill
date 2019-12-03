@@ -40,6 +40,7 @@ class MillController @Inject()(cc: ControllerComponents)(implicit system: ActorS
       case msg: String =>
         val status = performTurn(Json.parse(msg))
         out ! status
+        Concurrent.broadcast
     }
   }
 
