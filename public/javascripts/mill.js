@@ -1,7 +1,7 @@
 let csrf = $('input[name="csrfToken"]').attr("name");
-let foundMill = false
-let firstClick = true
-let clickOne = 0
+let foundMill = false;
+
+
 
 $.ajaxSetup({
     headers: {
@@ -33,25 +33,42 @@ function connectWebSocket() {
     }
 }
 
-function place(field, player) {
-    console.log("Player: " + player.player);
-    if (player.player === "White") {
-        console.log("place White Stone!");
-        field.attr("xlink:href", "#white");
-    } else if (player.player === "Black") {
-        console.log("place Black Stone!");
-        field.attr("xlink:href", "#black");
-    }
+async function updateField(field) {
+    getFieldStatus(field).done(data => {
+        console.log(data.fieldStatus)
+        if (data.fieldStatus === "White") {
+            field.attr("xlink:href", "#white");
+        } else if (data.fieldStatus === "Black") {
+            field.attr("xlink:href", "#black");
+        } else {
+            field.attr("xlink:href", "#empty");
+        }
+    }).fail(error => {
+        console.log("Error")
+    });
+    //console.log("Change fieldStatus to " + ajax.data.fieldStatus);
+
 }
 
-function move(field1, field2, player) {
-    if (player === "Black") {
-        field1.attr("xlink:href", "#empty");
-        field2.attr("xlink:href", "#black");
-    } else if (player === "White") {
-        field1.attr("xlink:href", "#empty");
-        field2.attr("xlink:href", "#white");
-    }
+
+async function killMan(field) {
+    //field.attr("xlink:href", "#empty");
+    await getFieldStatus(field);
+    //currentFieldStatus = "Empty";
+    updateField(field)
+}
+
+
+
+function getFieldStatus(field) {
+    let fieldID = parseInt($(field).attr("id").slice(5, 7));
+    return $.ajax({
+        type: 'POST',
+        url: '/getField',
+        data: JSON.stringify({
+            field: fieldID
+        })
+    })
 }
 
 function performTurn(startField, targetField, player) {
@@ -67,13 +84,7 @@ function performTurn(startField, targetField, player) {
                 })
             }).done(data => {
                 resolve(data);
-                console.log(data);
-                if(checkMill(startField)) {
-                    //alert("Mill");
-                } else {
-                    //alert("No Mill")
-                }
-
+                console.log(data)
                 if (data !== "200") {
                     if (data === "400") {
                         console.log(data);
@@ -83,7 +94,7 @@ function performTurn(startField, targetField, player) {
                     }
                 } else {
                     console.log("data " + data);
-                    place(startField, player);
+                    updateField(startField)
                     endPlayersTurn();
                 }
             }).fail(function () {
@@ -135,6 +146,28 @@ function checkMill(field) {
     })
 }
 
+function caseOfMill(field) {
+    let fieldID = parseInt($(field).attr("id").slice(5, 7));
+    $.ajax({
+        type: 'POST',
+        url: '/caseOfMill',
+        data: JSON.stringify({
+            field: fieldID
+        })
+    }).done(data => {
+        console.log("Received caseOfMill status: " + data)
+        if (data === "200") {
+            foundMill = true
+            killMan(field)
+        } else {
+            console.log(data)
+        }
+    }).fail( function () {
+        console.log("Failed caseOfMill function");
+        resolve(undefined);
+    })
+}
+
 function endPlayersTurn() {
     return new Promise(resolve => {
         $.get("/end").done(data => {
@@ -163,11 +196,11 @@ $(document).ready(function () {
         let player = await loadPlayer();
         if (player !== undefined) {
             console.log("Clicked Field: " + startField + " - Current Player: " + player.player +
-                            "Found Mill status: " + foundMill);
+                            " - Found Mill status: " + foundMill);
             if (!foundMill) {
                 if (player.phase === "Place") {
-                    await performTurn(startField, undefined, player)
-                    await checkMill(startField)
+                    await performTurn(startField, undefined, player);
+                    await checkMill(startField);
                     if(!foundMill) {
                         endPlayersTurn()
                     }
@@ -178,6 +211,9 @@ $(document).ready(function () {
                     })
                 }
                 $('#currentPlayer').text(player.player);
+            } else {
+                caseOfMill(startField);
+                updateField(startField);
             }
             $('#currentPlayer').text(player.player);
         } else {
