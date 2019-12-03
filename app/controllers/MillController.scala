@@ -38,7 +38,8 @@ class MillController @Inject()(cc: ControllerComponents)(implicit system: ActorS
   class MillWebSocketActor(out: ActorRef) extends Actor {
     override def receive: Receive = {
       case msg: String =>
-        out ! ("recieved msg " + msg)
+        val status = performTurn(Json.parse(msg))
+        out ! status
     }
   }
 
@@ -71,13 +72,22 @@ class MillController @Inject()(cc: ControllerComponents)(implicit system: ActorS
     }
   }
 
-  def performTurn: Action[JsValue] = Action(parse.json) { implicit request =>
+  def performTurn(json: JsValue): String = {
+    val err = gameController.performTurn((json \ "start").as[Int], (json \ "target").as[Int])
+    err match {
+      case Error.NoError => "200"
+      case default => "400 " + Error.errorMessage(err)
+    }
+  }
+
+
+  /*def performTurn(json: JsValue): Action[JsValue] = Action(parse.json) { implicit request =>
     val err = gameController.performTurn((request.body \ "start").as[Int], (request.body \ "target").as[Int])
     err match {
       case Error.NoError => Ok("200")
       case default => Status(400)("Detected error: " + Error.errorMessage(err))
     }
-  }
+  }*/
 
   def checkMill: Action[JsValue] = Action(parse.json) { implicit request =>
     val mill = gameController.checkMill((request.body \ "field").as[Int])
