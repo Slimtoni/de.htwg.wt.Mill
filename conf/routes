@@ -9,8 +9,8 @@ GET     /start                              controllers.MillController.startGame
 GET     /rules                              controllers.MillController.rules
 GET     /player                             controllers.MillController.playerOnTurnAPI
 GET     /end                                controllers.MillController.endPlayersTurn
-+nocsrf
-POST    /turn                               controllers.MillController.performTurn
+#+nocsrf
+#POST    /turn                               controllers.MillController.performTurn
 +nocsrf
 POST    /checkMill                          controllers.MillController.checkMill
 
