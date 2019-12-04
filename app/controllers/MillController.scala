@@ -1,17 +1,20 @@
 package controllers
 
-import com.fasterxml.jackson.databind.JsonNode
+import akka.actor.{Actor, ActorRef, ActorSystem, Props}
+import akka.stream.Materializer
 import de.htwg.se.NineMensMorris.NineMensMorris
-import de.htwg.se.NineMensMorris.controller.controllerComponent.controllerBaseImpl.ControllerMill
 import de.htwg.se.NineMensMorris.controller.controllerComponent.Error
+import de.htwg.se.NineMensMorris.controller.controllerComponent.controllerBaseImpl.ControllerMill
 import javax.inject._
 import play.api.libs.json._
+import play.api.libs.streams.ActorFlow
 import play.api.mvc._
-import views.html.helper.CSRF
+
+import scala.swing.Reactor
 
 
 @Singleton
-class MillController @Inject()(cc: ControllerComponents) extends AbstractController(cc) {
+class MillController @Inject()(cc: ControllerComponents)(implicit system: ActorSystem, mat: Materializer) extends AbstractController(cc) {
 
   val gameController: ControllerMill = NineMensMorris.controller
 
@@ -23,9 +26,51 @@ class MillController @Inject()(cc: ControllerComponents) extends AbstractControl
 
   def BoardAndPlayer: String = millAsText + playerOnTurn
 
+
+  def socket = WebSocket.accept[String, String] { request =>
+    ActorFlow.actorRef { out =>
+      MillWebSocketActor.props(out)
+    }
+  }
+
+  object MillWebSocketActor {
+    def props(out: ActorRef) = Props(new MillWebSocketActor(out))
+
+  }
+
+  class MillWebSocketActor(out: ActorRef) extends Actor with Reactor {
+    override def receive: Receive = {
+      case msg: String =>
+        val status = performTurn(Json.parse(msg))
+        out ! status
+        broadcast()
+
+    }
+    reactions
+  }
+
+  def broadcast() = Action { _ =>
+    system.actorSelection("akka://system/user/workers/*") ! "refresh"
+    Ok
+  }
+
   def mill: Action[AnyContent] = Action { implicit request =>
     Ok(views.html.mill(gameController))
   }
+
+  def getField: Action[JsValue] = Action(parse.json) { implicit request =>
+    val field = gameController.getField((request.body \ "field").as[Int])
+    field match {
+      case Some(value) => {
+        val json: JsValue = Json.obj(
+          "fieldStatus" -> value.fieldStatus
+        )
+        Ok(json)
+      }
+      case None => Status(400)
+    }
+  }
+
 
   def playerOnTurnAPI(): Action[AnyContent] = Action {
     if (playerOnTurn != null) {
@@ -38,11 +83,37 @@ class MillController @Inject()(cc: ControllerComponents) extends AbstractControl
     }
   }
 
-  def performTurn: Action[JsValue] = Action(parse.json) { implicit request =>
+  def performTurn(json: JsValue): String = {
+    val err = gameController.performTurn((json \ "start").as[Int], (json \ "target").as[Int])
+    err match {
+      case Error.NoError => "200"
+      case default => "400 " + Error.errorMessage(err)
+    }
+  }
+
+
+  /*def performTurn(json: JsValue): Action[JsValue] = Action(parse.json) { implicit request =>
     val err = gameController.performTurn((request.body \ "start").as[Int], (request.body \ "target").as[Int])
     err match {
       case Error.NoError => Ok("200")
       case default => Status(400)("Detected error: " + Error.errorMessage(err))
+    }
+  }*/
+
+  def checkMill: Action[JsValue] = Action(parse.json) { implicit request =>
+    val mill = gameController.checkMill((request.body \ "field").as[Int])
+    mill match {
+      case true => Ok("true")
+      case false => Ok("false")
+      case _ => Status(400)("Undefined return Type")
+    }
+  }
+
+  def caseOfMill: Action[JsValue] = Action(parse.json) { implicit request =>
+    val err = gameController.caseOfMill((request.body \ "field").as[Int])
+    err match {
+      case Error.NoError => Ok("200")
+      case _ => Status(400)("Detected error: " + Error.errorMessage(err))
     }
   }
 
@@ -51,12 +122,12 @@ class MillController @Inject()(cc: ControllerComponents) extends AbstractControl
     Ok("")
   }
 
-    def startGame(): Action[AnyContent] = Action { implicit request =>
-      gameController.startNewGame()
-      Ok(views.html.mill(gameController))
-    }
-
-    def rules: Action[AnyContent] = Action { implicit request =>
-      Ok(views.html.rules(gameController))
-    }
+  def startGame(): Action[AnyContent] = Action { implicit request =>
+    gameController.startNewGame()
+    Ok(views.html.mill(gameController))
   }
+
+  def rules: Action[AnyContent] = Action { implicit request =>
+    Ok(views.html.rules(gameController))
+  }
+}
