@@ -10,6 +10,8 @@ import play.api.libs.json._
 import play.api.libs.streams.ActorFlow
 import play.api.mvc._
 
+import scala.swing.Reactor
+
 
 @Singleton
 class MillController @Inject()(cc: ControllerComponents)(implicit system: ActorSystem, mat: Materializer) extends AbstractController(cc) {
@@ -33,14 +35,23 @@ class MillController @Inject()(cc: ControllerComponents)(implicit system: ActorS
 
   object MillWebSocketActor {
     def props(out: ActorRef) = Props(new MillWebSocketActor(out))
+
   }
 
-  class MillWebSocketActor(out: ActorRef) extends Actor {
+  class MillWebSocketActor(out: ActorRef) extends Actor with Reactor {
     override def receive: Receive = {
       case msg: String =>
         val status = performTurn(Json.parse(msg))
         out ! status
+        broadcast()
+
     }
+    reactions
+  }
+
+  def broadcast() = Action { _ =>
+    system.actorSelection("akka://system/user/workers/*") ! "refresh"
+    Ok
   }
 
   def mill: Action[AnyContent] = Action { implicit request =>
