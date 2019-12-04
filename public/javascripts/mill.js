@@ -33,7 +33,7 @@ async function updateField(field) {
 
 }
 
-function getBoard(){
+function getBoard() {
     return new Promise(resolve => {
         $.get("/board").done(data => {
             resolve(data);
@@ -51,7 +51,6 @@ async function killMan(field) {
     //currentFieldStatus = "Empty";
     updateField(field)
 }
-
 
 
 function getFieldStatus(field) {
@@ -107,6 +106,7 @@ function performTurn(startField, targetField, player) {
                 console.log("Cant perform turn");
             });
         });*/
+        getBoard();
     } else {
         let targetID = parseInt($(targetField).attr("id").slice(5, 7));
         websocket.send(JSON.stringify({
@@ -177,7 +177,7 @@ function caseOfMill(field) {
         } else {
             console.log(data)
         }
-    }).fail( function () {
+    }).fail(function () {
         console.log("Failed caseOfMill function");
         resolve(undefined);
     })
@@ -205,8 +205,7 @@ function loadPlayer() {
 }
 
 
-
-function connectWebSocket() {
+async function connectWebSocket() {
 
     websocket.setTimeout;
 
@@ -222,19 +221,19 @@ function connectWebSocket() {
         console.log("Error occured: " + error);
     };
 
-    websocket.onmessage = function (event) {
+    websocket.onmessage = async function (event) {
         if (typeof event.data === "string") {
             console.log("dataJS: " + event.data);
             if (event.data !== "200") {
                 if (event.data === "400") {
-                    console.log(event.data);
+                    console.log(event);
                     console.log("Unallowed turn");
                 } else {
                     console.log("An error occured");
                 }
             } else {
-                console.log("data " + event.data);
-                updateField(startField);
+                console.log(event);
+                await updateField(startField);
 
                 endPlayersTurn();
             }
