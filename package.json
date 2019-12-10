@@ -1,0 +1,30 @@
+{
+  "name": "de.htwg.wt.mill",
+  "version": "1.0.0",
+  "description": "[<img src=\"https://img.shields.io/travis/playframework/play-scala-starter-example.svg\"/>](https://travis-ci.org/playframework/play-scala-starter-example)",
+  "main": "index.js",
+  "directories": {
+    "lib": "lib",
+    "test": "test"
+  },
+  "dependencies": {
+    "@webcomponents/webcomponentsjs": "^2.4.0",
+    "lit-element": "^2.2.1",
+    "lit-html": "^1.1.2",
+    "polymer-cli": "^1.9.11"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Slimtoni/de.htwg.wt.Mill.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Slimtoni/de.htwg.wt.Mill/issues"
+  },
+  "homepage": "https://github.com/Slimtoni/de.htwg.wt.Mill#readme"
+}

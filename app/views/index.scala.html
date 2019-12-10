@@ -20,19 +20,15 @@
 
         <link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/bootstrap.min.css")" >
         <link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/main.css")" >
+        <script src="@routes.Assets.versioned("bower_components/webcomponentsjs/webcomponents-lite.js")"></script>
         <script type="module" src="assets/src/mill-app/mill-button.js"></script>
-        <script src="@routes.Assets.versioned("../../public/src/mill-app/mill-button.js")"></script>
-        <script src="@routes.Assets.versioned("src/mill-app/mill-button.js")"></script>
-
-
-
         <link rel="shortcut icon" type="image/png" href="@routes.Assets.versioned("images/favicon.png")">
-
-
 
     </head>
     <body>
         @helper.CSRF.formField
+        <mill-button>test</mill-button>
+
 
         @* And here's where we render the `Html` object containing
          * the page content. *@
@@ -41,6 +37,7 @@
         <script src="@routes.Assets.versioned("javascripts/jquery-3.3.1.min.js")"></script>
         <script src="@routes.Assets.versioned("javascripts/bootstrap.min.js")" ></script>
         <script src="@routes.Assets.versioned("javascripts/mill.js")"></script>
+        <script src="@routes.Assets.versioned("javascripts/mill-button.js")"></script>
 
     </body>
 </html>
