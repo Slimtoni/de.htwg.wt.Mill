@@ -1,73 +1,73 @@
-@(controller:de.htwg.se.NineMensMorris.controller.controllerComponent.ControllerInterface)(implicit request: RequestHeader)
+@(controller: de.htwg.se.NineMensMorris.controller.controllerComponent.ControllerInterface)(implicit request: RequestHeader)
 @main("rules") {
 
-            <div class="container">
-                @navbar()
-                <h1>Rules</h1>
+    <div class="container">
+        @navbar()
+        <h1>Rules</h1>
 
-                <div class="box">
-                    <p>There are 3 phases in the game.</p>
-                    <ol type ="1">
-                        <li>Place</li>
-                        <li>Move</li>
-                        <li>Fly</li>
-                    </ol>
+        <div class="box">
+            <p>There are 3 phases in the game.</p>
+            <ol type ="1">
+                <li>Place</li>
+                <li>Move</li>
+                <li>Fly</li>
+            </ol>
+        </div>
+        <div id="accordion">
+            <div class="card">
+                <div class="card-header" id="headingOne">
+                    <h5 class="mb-0">
+                        <button class="btn btn-link" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                            Place
+                        </button>
+                    </h5>
                 </div>
-                <div id="accordion">
-                    <div class="card">
-                        <div class="card-header" id="headingOne">
-                            <h5 class="mb-0">
-                                <button class="btn btn-link" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                                    Place
-                                </button>
-                            </h5>
-                        </div>
 
-                        <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
-                            <div class="card-body">
-                                Before the game starts a coin has to be tossed to decide who will play white - white then moves first. <br>
-                                White has to place a stone on a free point of its choice. Then black has to place a stone. This continues until all 18 stones have been placed. <br>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card">
-                        <div class="card-header" id="headingTwo">
-                            <h5 class="mb-0">
-                                <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                                    Move
-                                </button>
-                            </h5>
-                        </div>
-                        <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
-                            <div class="card-body">
-                                Now the player can move a stone to a free adjacent point along the lines
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card">
-                        <div class="card-header" id="headingThree">
-                            <h5 class="mb-0">
-                                <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-                                    Fly
-                                </button>
-                            </h5>
-                        </div>
-                        <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordion">
-                            <div class="card-body">
-                                When a player has only 3 stones left he can move a stone to any free point on the board
-                            </div>
-                        </div>
+                <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
+                    <div class="card-body">
+                        Before the game starts a coin has to be tossed to decide who will play white - white then moves first. <br>
+                        White has to place a stone on a free point of its choice. Then black has to place a stone. This continues until all 18 stones have been placed. <br>
                     </div>
                 </div>
-                <h3>Case of mill</h3>
-                <div class="box">
+            </div>
+            <div class="card">
+                <div class="card-header" id="headingTwo">
+                    <h5 class="mb-0">
+                        <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                            Move
+                        </button>
+                    </h5>
+                </div>
+                <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
+                    <div class="card-body">
+                        Now the player can move a stone to a free adjacent point along the lines
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header" id="headingThree">
+                    <h5 class="mb-0">
+                        <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                            Fly
+                        </button>
+                    </h5>
+                </div>
+                <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordion">
+                    <div class="card-body">
+                        When a player has only 3 stones left he can move a stone to any free point on the board
+                    </div>
+                </div>
+            </div>
+        </div>
+        <h3>Case of mill</h3>
+            <div class="box">
                     <p>If 3 stones of one colour form a line the player can remove a stone of his opponent which isn't in a mill (If all the stones are in a mill this rule doesnt apply) <br>
                         The stones remain outside the board and cant be placed back on it
                     </p>
-                </div>
-                <h3>Game ending</h3>
-                <p>The game ends if one player has only 2 Stones left. The other player wins the game</p>
-                <p>Let's play a <a href="/start"> Game</a></p>
-                <img id="img" src="@routes.Assets.versioned("images/Board.jpg")"/>
             </div>
+        <h3>Game ending</h3>
+        <p>The game ends if one player has only 2 Stones left. The other player wins the game</p>
+        <p>Let's play a <a href="/start"> Game</a></p>
+        <img id="img" src="@routes.Assets.versioned("images/Board.jpg")"/>
+    </div>
 }

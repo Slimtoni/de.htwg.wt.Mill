@@ -23,6 +23,7 @@ class MillButton extends LitElement {
     constructor(){
         super();
         this.data = '';
+
     }
 
     render() {
