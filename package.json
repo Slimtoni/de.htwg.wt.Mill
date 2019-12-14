@@ -11,7 +11,8 @@
     "@webcomponents/webcomponentsjs": "^2.4.0",
     "lit-element": "^2.2.1",
     "lit-html": "^1.1.2",
-    "polymer-cli": "^1.9.11"
+    "polymer-cli": "^1.9.11",
+    "vue": "^2.6.11"
   },
   "devDependencies": {},
   "scripts": {
