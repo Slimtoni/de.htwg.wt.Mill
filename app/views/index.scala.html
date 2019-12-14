@@ -5,6 +5,7 @@
  * object to insert into the body of the page.
  *@
 @import views.html.helper.CSRF
+
 @(title: String)(content: Html)(implicit request: RequestHeader)
 
 <!DOCTYPE html>
@@ -19,14 +20,15 @@
 
         <link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/bootstrap.min.css")" >
         <link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/main.css")" >
+        <script src="@routes.Assets.versioned("bower_components/webcomponentsjs/webcomponents-lite.js")"></script>
+        <script type="module" src="assets/src/mill-app/mill-box.js"></script>
+        <script type="module" src="assets/src/mill-app/mill-button.js"></script>
+
         <link rel="shortcut icon" type="image/png" href="@routes.Assets.versioned("images/favicon.png")">
-
-
 
     </head>
     <body>
         @helper.CSRF.formField
-
         @* And here's where we render the `Html` object containing
          * the page content. *@
         @content

@@ -14,13 +14,13 @@
 }
 
 @main("Nine Mens Morris") {
-        <div class="container">
+    <div class="container">
             @navbar()
         <div class="jumbotron header-jumbotron d-flex flex-column justify-content-center align-items-center">
             <h1 class="display-4">Welcome to Nine Mens Morris!</h1>
             <h2 class="display-6" id="currentPlayer"> @currentPlayer </h2>
             <h2 class="display-6" id="foundMill"> false </h2>
-            <a class="btn btn-primary" href="/start" role="button">Start game</a>
+            <mill-button data="Start Game"></mill-button>
         </div>
         <section class="game">
             <div class="align-content-center">

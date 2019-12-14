@@ -6,4 +6,7 @@ target
 /.project
 /.settings
 lib/.DS_Store
+demo/
+node_modules/
+test/*
 /RUNNING_PID
