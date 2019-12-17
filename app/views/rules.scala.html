@@ -1,9 +1,11 @@
 @(controller: de.htwg.se.NineMensMorris.controller.controllerComponent.ControllerInterface)(implicit request: RequestHeader)
 @main("rules") {
+    <script src="@routes.Assets.versioned("vue/components/mill-button.js")"></script>
 
     <div class="container">
         @navbar()
         <h1>Rules</h1>
+        <mill-button-vue></mill-button-vue>
 
         <div class="box">
             <p>There are 3 phases in the game.</p>
