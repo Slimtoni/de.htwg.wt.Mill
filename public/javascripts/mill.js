@@ -242,6 +242,14 @@ async function connectWebSocket() {
 }
 
 $(document).ready(function () {
+
+    var app = new Vue({
+        el: '#mill-app',
+        render: function (html) {
+            return html(MillApp.default, {});
+        }
+
+    })
     connectWebSocket();
     getBoard();
     $('.field').click(async function () {
