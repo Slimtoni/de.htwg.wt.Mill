@@ -242,13 +242,12 @@ async function connectWebSocket() {
 }
 
 $(document).ready(function () {
-
-    var app = new Vue({
+    import MillApp from '../../app/assets/vue/components/mill-app.vue'
+    let app = new Vue({
         el: '#mill-app',
-        render: function (html) {
-            return html(MillApp.default, {});
+        components: {
+            MillApp
         }
-
     })
     connectWebSocket();
     getBoard();
