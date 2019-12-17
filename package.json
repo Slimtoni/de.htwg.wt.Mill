@@ -7,7 +7,7 @@
   ],
   "devDependencies": {
     "@types/node": "^10.12.15",
-    "babel-core": "^6.26.0",
+    "babel-core": "^7.0.0-0",
     "babel-loader": "^7.1.2",
     "bootstrap": "^4.4.1",
     "bootstrap-vue": "^2.1.0",
@@ -27,6 +27,15 @@
     "@webcomponents/webcomponentsjs": "^2.4.0",
     "lit-element": "^2.2.1",
     "lit-html": "^1.1.2",
-    "polymer-cli": "^1.9.11"
+    "polymer-cli": "^1.9.11",
+    "cross-env": "^6.0.3",
+    "laravel-mix": "^5.0.1"
+  },
+  "scripts": {
+    "development": "cross-env NODE_ENV=development node_modules/webpack/bin/webpack.js --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
+    "dev" : "npm run development",
+    "watch" : "npm run development -- --watch",
+    "production" : "cross-env NODE_ENV=production node_modules/webpack/bin/webpack.js --no-progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
+    "prod": "npm run production"
   }
 }

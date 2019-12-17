@@ -24,7 +24,7 @@ class FunctionalSpec extends PlaySpec with GuiceOneAppPerSuite {
 
   "HomeController" should {
 
-    "render the index page" in {
+    "render the main page" in {
       val home = route(app, FakeRequest(GET, "/")).get
 
       status(home) mustBe Status.OK
