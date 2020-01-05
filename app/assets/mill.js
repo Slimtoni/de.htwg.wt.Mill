@@ -254,7 +254,7 @@ $(document).ready(function () {
             MillButton,
             MillBox
         }
-    })
+    });
     connectWebSocket();
     getBoard();
     $('.field').click(async function () {
