@@ -9,4 +9,5 @@ lib/.DS_Store
 demo/
 node_modules/
 test/*
+public/javascripts/mill.js
 /RUNNING_PID

@@ -1,18 +1,10 @@
 @(controller: de.htwg.se.NineMensMorris.controller.controllerComponent.ControllerInterface)(implicit request: RequestHeader)
 @main("rules") {
-
     <div class="container">
         @navbar()
         <h1>Rules</h1>
+        <mill-box :description="'There are 3 phases in the game.'" :list="[{id:1, text: 'Place'}, {id:2, text:'Move'},{id:3, text:'Fly'} ]"></mill-box>
 
-        <div class="box">
-            <p>There are 3 phases in the game.</p>
-            <ol type ="1">
-                <li>Place</li>
-                <li>Move</li>
-                <li>Fly</li>
-            </ol>
-        </div>
         <div id="accordion">
             <div class="card">
                 <div class="card-header" id="headingOne">
@@ -60,14 +52,29 @@
             </div>
         </div>
         <h3>Case of mill</h3>
-            <div class="box">
-                    <p>If 3 stones of one colour form a line the player can remove a stone of his opponent which isn't in a mill (If all the stones are in a mill this rule doesnt apply) <br>
-                        The stones remain outside the board and cant be placed back on it
-                    </p>
-            </div>
+        <mill-box :description="'If 3 stones of one colour form a line the player can remove a stone of his opponent which is not in a mill (If all the stones are in a mill this rule doesnt apply).<br>The stones remain outside the board and cant be placed back on it'"></mill-box>
+
         <h3>Game ending</h3>
         <p>The game ends if one player has only 2 Stones left. The other player wins the game</p>
         <p>Let's play a <a href="/start"> Game</a></p>
         <img id="img" src="@routes.Assets.versioned("images/Board.jpg")"/>
     </div>
 }
+<script>
+    import Example from "../assets/components/example";
+    export default {
+        components: {Example}
+    }
+</script>
+<script>
+    import MillBox from "../assets/components/MillBox";
+    export default {
+        components: {MillBox}
+    }
+</script>
+<script>
+    import MillBox from "../assets/components/MillBox";
+    export default {
+        components: {MillBox}
+    }
+</script>
