@@ -5,6 +5,7 @@ import akka.stream.Materializer
 import de.htwg.se.NineMensMorris.NineMensMorris
 import de.htwg.se.NineMensMorris.controller.controllerComponent.Error
 import de.htwg.se.NineMensMorris.controller.controllerComponent.controllerBaseImpl.ControllerMill
+import de.htwg.se.NineMensMorris.model.playerComponent.playerBaseImpl.Player
 import javax.inject._
 import play.api.libs.json._
 import play.api.libs.streams.ActorFlow
@@ -27,7 +28,7 @@ class MillController @Inject()(cc: ControllerComponents)(implicit system: ActorS
   def BoardAndPlayer: String = millAsText + playerOnTurn
 
 
-  def socket = WebSocket.accept[String, String] { request =>
+  def socket: WebSocket = WebSocket.accept[String, String] { request =>
     ActorFlow.actorRef { out =>
       MillWebSocketActor.props(out)
     }
@@ -41,12 +42,27 @@ class MillController @Inject()(cc: ControllerComponents)(implicit system: ActorS
   class MillWebSocketActor(out: ActorRef) extends Actor with Reactor {
     override def receive: Receive = {
       case msg: String =>
-        val status = performTurn(Json.parse(msg))
+        val json = Json.parse(msg)
+        val functionName = json("function").toString().replace("\"", "")
+        functionName match {
+          case "loadPlayer" => out ! loadPlayer
+          case "getFieldStatus" => out ! getFieldStatus(json)
+          case "performTurn" => out ! performTurn(json)
+          case "endPlayersTurn" => endPlayersTurn
+        }
+        /*val status = performTurn(Json.parse(msg))
         out ! status
-        broadcast()
-
+        broadcast()*/
     }
     reactions
+  }
+
+  def loadPlayer: String = {
+    val player = Json.obj("type" -> "loadPlayer", "player" -> Json.obj(
+      "name" -> gameController.getPlayerOnTurn,
+      "phase" -> gameController.getPlayerOnTurnPhase
+    ))
+    player.toString
   }
 
   def broadcast() = Action { _ =>
@@ -71,12 +87,22 @@ class MillController @Inject()(cc: ControllerComponents)(implicit system: ActorS
     }
   }
 
-
+  def getFieldStatus(json: JsValue): String = {
+    val fieldID = json("field").toString().replace("\"", "").toInt
+    val field = gameController.getField(fieldID)
+    field match {
+      case Some(value) => Json.obj("type" -> "fieldStatus" ,"status" -> value.fieldStatus.toString).toString()//JsString(value.fieldStatus.toString)).toString()
+      case None => Json.obj("type" -> "fieldStatus", "status" -> "Empty").toString()
+    }
+  }
+  //TODO: vue js methods
+  //https://github.com/Luckytama/Play-Empire/blob/master/app/controllers/EmpireController.scala
+  //https://github.com/Luckytama/Play-Empire/blob/master/public/javascripts/game_page.js
   def playerOnTurnAPI(): Action[AnyContent] = Action {
     if (playerOnTurn != null) {
       val json: JsValue = Json.obj(
-        "player" -> playerOnTurn,
-        "phase" -> playerPhase)
+        "player" -> JsString(playerOnTurn),
+        "phase" -> JsString(playerPhase))
       Ok(json)
     } else {
       Status(400)
@@ -84,10 +110,12 @@ class MillController @Inject()(cc: ControllerComponents)(implicit system: ActorS
   }
 
   def performTurn(json: JsValue): String = {
-    val err = gameController.performTurn((json \ "start").as[Int], (json \ "target").as[Int])
+    val startField = json("start").toString().replace("\"", "").toInt
+    val targetField = json("target").toString().replace("\"", "").toInt
+    val err = gameController.performTurn(startField, targetField)
     err match {
-      case Error.NoError => "200"
-      case default => "400 " + Error.errorMessage(err)
+      case Error.NoError => Json.obj("type" -> "performTurn", "result" -> "200").toString()
+      case default => Json.obj("type" -> "performTurn", "result" -> "400").toString()
     }
   }
 
@@ -117,9 +145,8 @@ class MillController @Inject()(cc: ControllerComponents)(implicit system: ActorS
     }
   }
 
-  def endPlayersTurn: Action[AnyContent] = Action {
+  def endPlayersTurn(): Unit = {
     gameController.endPlayersTurn()
-    Ok("")
   }
 
   def startGame(): Action[AnyContent] = Action { implicit request =>
