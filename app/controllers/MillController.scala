@@ -91,7 +91,7 @@ class MillController @Inject()(cc: ControllerComponents)(implicit system: ActorS
     val fieldID = json("field").toString().replace("\"", "").toInt
     val field = gameController.getField(fieldID)
     field match {
-      case Some(value) => Json.obj("type" -> "fieldStatus" ,"status" -> value.fieldStatus.toString).toString()//JsString(value.fieldStatus.toString)).toString()
+      case Some(value) => Json.obj("type" -> "fieldStatus", "id" -> fieldID ,"status" -> value.fieldStatus.toString).toString()//JsString(value.fieldStatus.toString)).toString()
       case None => Json.obj("type" -> "fieldStatus", "status" -> "Empty").toString()
     }
   }

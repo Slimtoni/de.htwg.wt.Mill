@@ -19,30 +19,30 @@ $(document).ready(function () {
         },
         data: {
             gameboard: [
-                {id: 0, x: 10, y: 10},
-                {id: 1, x: 305, y: 10},
-                {id: 2, x: 599, y: 10},
-                {id: 3, x: 107, y: 109},
-                {id: 4, x: 305, y: 109},
-                {id: 5, x: 502, y: 109},
-                {id: 6, x: 207, y: 208},
-                {id: 7, x: 305, y: 206},
-                {id: 8, x: 404, y: 207},
-                {id: 9, x: 10, y: 305},
-                {id: 10, x: 107, y: 305},
-                {id: 11, x: 206, y: 305},
-                {id: 12, x: 404, y: 305},
-                {id: 13, x: 502, y: 305},
-                {id: 14, x: 599, y: 305},
-                {id: 15, x: 207, y: 404},
-                {id: 16, x: 305, y: 405},
-                {id: 17, x: 404, y: 403},
-                {id: 18, x: 107, y: 504},
-                {id: 19, x: 305, y: 504},
-                {id: 20, x: 502, y: 504},
-                {id: 21, x: 10, y: 600},
-                {id: 22, x: 305, y: 602},
-                {id: 23, x: 599, y: 602}
+                {id: 0, x: 10, y: 10, status: "empty"},
+                {id: 1, x: 305, y: 10, status: "empty"},
+                {id: 2, x: 599, y: 10, status: "empty"},
+                {id: 3, x: 107, y: 109, status: "empty"},
+                {id: 4, x: 305, y: 109, status: "empty"},
+                {id: 5, x: 502, y: 109, status: "empty"},
+                {id: 6, x: 207, y: 208, status: "empty"},
+                {id: 7, x: 305, y: 206, status: "empty"},
+                {id: 8, x: 404, y: 207, status: "empty"},
+                {id: 9, x: 10, y: 305, status: "empty"},
+                {id: 10, x: 107, y: 305, status: "empty"},
+                {id: 11, x: 206, y: 305, status: "empty"},
+                {id: 12, x: 404, y: 305, status: "empty"},
+                {id: 13, x: 502, y: 305, status: "empty"},
+                {id: 14, x: 599, y: 305, status: "empty"},
+                {id: 15, x: 207, y: 404, status: "empty"},
+                {id: 16, x: 305, y: 405, status: "empty"},
+                {id: 17, x: 404, y: 403, status: "empty"},
+                {id: 18, x: 107, y: 504, status: "empty"},
+                {id: 19, x: 305, y: 504, status: "empty"},
+                {id: 20, x: 502, y: 504, status: "empty"},
+                {id: 21, x: 10, y: 600, status: "empty"},
+                {id: 22, x: 305, y: 602, status: "empty"},
+                {id: 23, x: 599, y: 602, status: "empty"}
             ],
             playerOnTurn: "",
             playerPhase: "",
@@ -55,22 +55,22 @@ $(document).ready(function () {
             performTurnResult: ""
         },
         methods: {
-            getFieldStatus: function () {
+            getFieldStatus: function (id) {
                 let data = {};
                 data.function = "getFieldStatus";
-                data.field = this.currentFieldID;
+                data.field = id;
                 websocket.send(JSON.stringify(data));
             },
-            performTurn: function () {
+            performTurn: function (start, target) {
                 let data = {};
                 data.function = "performTurn";
-                if (data.targetField === undefined) {
-                    data.start = parseInt($(this.startField).attr("id").slice(5, 7));
+                if (typeof data.targetField === "undefined") {
+                    data.start = start;
                     data.target = -1;
                     websocket.send(JSON.stringify(data));
                 } else {
-                    data.start = parseInt($(this.startField).attr("id").slice(5, 7));
-                    data.target = parseInt($(this.targetField).attr("id").slice(5, 7));
+                    data.start = start;
+                    data.target = target;
                     websocket.send(JSON.stringify(data));
                 }
             },
@@ -151,14 +151,12 @@ $(document).ready(function () {
                     app.playerOnTurn = msg.player.name;
                     app.playerPhase = msg.player.phase;
                 } else if (msg.type === "fieldStatus") {
-                    app.currentFieldStatus = msg.status;
-                    console.log("currentfieldstatus:  " + app.currentFieldStatus);
+                    app.gameboard[msg.id]["status"] = msg.status.toLowerCase()
+                    console.log("Field " + msg.id + " FieldStatus "+ msg.status);
                 } else if (msg.type === "performTurn") {
                     app.performTurnResult = msg.result;
                     console.log("result " + app.performTurnResult);
                     if (app.performTurnResult === "200") {
-                        app.updateField();
-                        console.log("UpdateField")
                     }
                 }
             }
@@ -166,7 +164,7 @@ $(document).ready(function () {
     }
 
 
-    $('.field').click(async function () {
+    /*$('.field').click(async function () {
         //console.log("Field " + $(this).data().id + " clicked!")
         app.currentFieldID = parseInt($(this).attr("id").slice(5, 7));
         app.currentField = $(this);
@@ -191,7 +189,7 @@ $(document).ready(function () {
                     }
                 } else if (app.playerOnTurn.phase === "Move" || app.playerOnTurn.phase === "Fly") {
                     $('.field').click(function () {
-                        app.targetField = parseInt($(this).attr("id").slice(5, 7));
+                        app.targetField = parseInt($(this).atthis.$roottr("id").slice(5, 7));
                         //app.performTurn(app.startField, app.targetField, app.playerOnTurn);
                     })
                 }
@@ -208,5 +206,5 @@ $(document).ready(function () {
         }
 
 
-    });
+    });*/
 });
