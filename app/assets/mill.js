@@ -91,7 +91,7 @@ $(document).ready(function () {
             caseOfMill: function (fieldID) {
                 let data = {};
                 data.function = "caseOfMill";
-                data.field = parseInt($(fieldID).attr("id").slice(5, 7));
+                data.field = fieldID;
                 websocket.send(JSON.stringify(data));
             },
             endPlayersTurn: function () {
@@ -107,6 +107,9 @@ $(document).ready(function () {
             killMan: function (fieldID) {
                 this.getFieldStatus(fieldID);
                 this.updateField(fieldID);
+            },
+            sleep: function (milliseconds) {
+                return new Promise(resolve => setTimeout(resolve, milliseconds));
             }
         },
 
@@ -124,9 +127,8 @@ $(document).ready(function () {
 
     function connectWebSocket() {
 
-        //websocket.setTimeout;
-
         websocket.onopen = function () {
+            app.updateGameboard();
             console.log("Connected to Socket");
         };
 
@@ -171,20 +173,24 @@ $(document).ready(function () {
                         }
                     }
                 } else if (msg.type === "performTurn") {
-                    app.performTurnResult = msg.result;
-                    console.log("result " + app.performTurnResult);
-                    if (app.performTurnResult === "200") {
+                    if (msg.result === "200") {
                         app.updateGameboard();
                     } else {
                         console.log("func performTurn returned with Error: " + msg.result)
                     }
                 } else if (msg.type === "checkMill") {
                     if (msg.foundMill === "true") {
-                        app.foundMill = true;
+                     app.foundMill = true;
                     } else {
                         app.foundMill = false;
+                        console.log("No Mill found!!!");
                     }
-
+                } else if (msg.type === "caseOfMill") {
+                    if (msg.result === "200") {
+                        app.updateGameboard();
+                    } else {
+                        console.log("func caseOfMill returned with Error: " + msg.result);
+                    }
                 }
             }
         }

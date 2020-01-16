@@ -8,8 +8,6 @@ GET     /board                              controllers.MillController.mill
 GET     /start                              controllers.MillController.startGame
 GET     /rules                              controllers.MillController.rules
 +nocsrf
-POST    /caseOfMill                         controllers.MillController.caseOfMill
-+nocsrf
 POST    /getField                           controllers.MillController.getField
 
 GET     /websocket                          controllers.MillController.socket

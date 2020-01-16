@@ -78,6 +78,7 @@ class MillController @Inject()(cc: ControllerComponents)(implicit system: ActorS
           case "endPlayersTurn" => endPlayersTurn()
           case "updateGameboard" => out ! updateGameboard()
           case "checkMill" => out ! checkMill(json)
+          case "caseOfMill" => out ! caseOfMill(json)
         }
         /*val status = performTurn(Json.parse(msg))
         out ! status
@@ -155,11 +156,11 @@ class MillController @Inject()(cc: ControllerComponents)(implicit system: ActorS
 
   }
 
-  def caseOfMill: Action[JsValue] = Action(parse.json) { implicit request =>
-    val err = gameController.caseOfMill((request.body \ "field").as[Int])
+  def caseOfMill(json: JsValue): String = {
+    val err = gameController.caseOfMill(json("field").toString().replace("\"", "").toInt)
     err match {
-      case Error.NoError => Ok("200")
-      case _ => Status(400)("Detected error: " + Error.errorMessage(err))
+      case Error.NoError => Json.obj("type" -> "caseOfMill", "result" -> "200").toString()
+      case _ => Json.obj("type" -> "caseOfMill", "result" -> err.toString).toString()
     }
   }
 
