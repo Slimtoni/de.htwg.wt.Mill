@@ -5,7 +5,6 @@ import akka.stream.Materializer
 import de.htwg.se.NineMensMorris.NineMensMorris
 import de.htwg.se.NineMensMorris.controller.controllerComponent.Error
 import de.htwg.se.NineMensMorris.controller.controllerComponent.controllerBaseImpl.ControllerMill
-import de.htwg.se.NineMensMorris.model.playerComponent.playerBaseImpl.Player
 import javax.inject._
 import play.api.libs.json._
 import play.api.libs.streams.ActorFlow
@@ -27,6 +26,36 @@ class MillController @Inject()(cc: ControllerComponents)(implicit system: ActorS
 
   def BoardAndPlayer: String = millAsText + playerOnTurn
 
+  def gameboard: String = gameController.gameboardToString
+
+  def gameinfoJson: JsObject = {
+    var vertexJson = gameController.gameboard.vertexList.toString()
+    vertexJson = vertexJson.substring(12, vertexJson.length - 1)
+    vertexJson = vertexJson.replaceAll(", ", "")
+    Json.obj(
+      "Players" -> Json.obj(
+        "player1" -> Json.obj(
+          "name" -> JsString(gameController.playerWhite.name),
+          "phase" -> JsString(gameController.playerWhite.phase.toString),
+          "placedMen" -> JsNumber(gameController.playerWhite.numberPlacedMen),
+          "lostMen" -> JsNumber(gameController.playerWhite.numberLostMen)
+
+        ),
+        "player2" -> Json.obj(
+          "name" -> JsString(gameController.playerBlack.name),
+          "phase" -> JsString(gameController.playerBlack.phase.toString),
+          "placedMen" -> JsNumber(gameController.playerBlack.numberPlacedMen),
+          "lostMen" -> JsNumber(gameController.playerBlack.numberLostMen)
+        ),
+        "playerOnTurn" -> Json.obj(
+          "name" -> JsString(gameController.playerOnTurn.name)
+        )
+      ),
+      "gameboard" -> Json.obj(
+        "vertexList" -> JsString(vertexJson)
+      )
+    )
+  }
 
   def socket: WebSocket = WebSocket.accept[String, String] { request =>
     ActorFlow.actorRef { out =>
@@ -45,10 +74,10 @@ class MillController @Inject()(cc: ControllerComponents)(implicit system: ActorS
         val json = Json.parse(msg)
         val functionName = json("function").toString().replace("\"", "")
         functionName match {
-          case "loadPlayer" => out ! loadPlayer
-          case "getFieldStatus" => out ! getFieldStatus(json)
           case "performTurn" => out ! performTurn(json)
-          case "endPlayersTurn" => endPlayersTurn
+          case "endPlayersTurn" => endPlayersTurn()
+          case "updateGameboard" => out ! updateGameboard()
+          case "checkMill" => out ! checkMill(json)
         }
         /*val status = performTurn(Json.parse(msg))
         out ! status
@@ -57,12 +86,8 @@ class MillController @Inject()(cc: ControllerComponents)(implicit system: ActorS
     reactions
   }
 
-  def loadPlayer: String = {
-    val player = Json.obj("type" -> "loadPlayer", "player" -> Json.obj(
-      "name" -> gameController.getPlayerOnTurn,
-      "phase" -> gameController.getPlayerOnTurnPhase
-    ))
-    player.toString
+  def updateGameboard(): String = {
+    Json.obj("type" -> "updateGameboard", "game" -> gameinfoJson).toString()
   }
 
   def broadcast() = Action { _ =>
@@ -87,14 +112,6 @@ class MillController @Inject()(cc: ControllerComponents)(implicit system: ActorS
     }
   }
 
-  def getFieldStatus(json: JsValue): String = {
-    val fieldID = json("field").toString().replace("\"", "").toInt
-    val field = gameController.getField(fieldID)
-    field match {
-      case Some(value) => Json.obj("type" -> "fieldStatus", "id" -> fieldID ,"status" -> value.fieldStatus.toString).toString()//JsString(value.fieldStatus.toString)).toString()
-      case None => Json.obj("type" -> "fieldStatus", "status" -> "Empty").toString()
-    }
-  }
   //TODO: vue js methods
   //https://github.com/Luckytama/Play-Empire/blob/master/app/controllers/EmpireController.scala
   //https://github.com/Luckytama/Play-Empire/blob/master/public/javascripts/game_page.js
@@ -128,13 +145,14 @@ class MillController @Inject()(cc: ControllerComponents)(implicit system: ActorS
     }
   }*/
 
-  def checkMill: Action[JsValue] = Action(parse.json) { implicit request =>
-    val mill = gameController.checkMill((request.body \ "field").as[Int])
+  def checkMill(json: JsValue): String = {
+    val mill = gameController.checkMill(json("field").toString().replace("\"", "").toInt)
     mill match {
-      case true => Ok("true")
-      case false => Ok("false")
-      case _ => Status(400)("Undefined return Type")
+      case true => Json.obj("type" -> "checkMill", "foundMill" -> "true").toString()
+      case false => Json.obj("type" -> "checkMill", "foundMill" -> "false").toString()
+      case _ => Json.obj("type" -> "checkMill", "foundMill" -> "false").toString()
     }
+
   }
 
   def caseOfMill: Action[JsValue] = Action(parse.json) { implicit request =>

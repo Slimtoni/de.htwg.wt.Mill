@@ -22,16 +22,13 @@
         methods: {
             clickHandler: function () {
                 console.log("Field " + this.id + " clicked!");
+                this.$root.updateGameboard();
 
-                this.$root.loadPlayer();
                 if (this.$root.playerOnTurn !== undefined) {
-                    console.log(this.$root.foundMill);
                     if (!this.$root.foundMill) {
-                        if (this.$root.playerPhase === "Place") {
-                            console.log("White Player wants to place");
+                        if (this.$root.playerOnTurnPhase === "Place") {
                             this.$root.performTurn(this.id, undefined);
-                            this.updateField();
-                            //await app.checkMill(app.startField);
+                            this.$root.checkMill(this.id);
 
                             if (!this.$root.foundMill) {
                                 console.log("No Mill found!!!");
@@ -40,9 +37,6 @@
                         }
                     }
                 }
-            },
-            updateField: function () {
-                this.$root.getFieldStatus(this.id);
             }
         }
     }
