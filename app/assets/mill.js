@@ -4,6 +4,11 @@ window.Vue = require('vue');
 import MillButton from "./components/MillButton";
 import MillBox from "./components/MillBox";
 import Gameboard from "./components/Gameboard";
+import MillFooter from "./components/MillFooter";
+import Navbar from "./components/Navbar";
+import Rules from "./components/Rules";
+import MillLoginPage from "./components/MillLoginPage";
+import VueJSModal from "vue-js-modal";
 
 $(document).ready(function () {
     let websocket = new WebSocket("ws://localhost:9000/websocket");
@@ -15,7 +20,13 @@ $(document).ready(function () {
         components: {
             MillButton,
             MillBox,
-            Gameboard
+            Gameboard,
+            MillFooter,
+            Rules,
+            Navbar,
+            MillLoginPage
+
+
         },
         data: {
             gameboard: [

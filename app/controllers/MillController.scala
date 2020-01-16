@@ -5,7 +5,6 @@ import akka.stream.Materializer
 import de.htwg.se.NineMensMorris.NineMensMorris
 import de.htwg.se.NineMensMorris.controller.controllerComponent.Error
 import de.htwg.se.NineMensMorris.controller.controllerComponent.controllerBaseImpl.ControllerMill
-import de.htwg.se.NineMensMorris.model.playerComponent.playerBaseImpl.Player
 import javax.inject._
 import play.api.libs.json._
 import play.api.libs.streams.ActorFlow
@@ -50,10 +49,11 @@ class MillController @Inject()(cc: ControllerComponents)(implicit system: ActorS
           case "performTurn" => out ! performTurn(json)
           case "endPlayersTurn" => endPlayersTurn
         }
-        /*val status = performTurn(Json.parse(msg))
-        out ! status
-        broadcast()*/
+      /*val status = performTurn(Json.parse(msg))
+      out ! status
+      broadcast()*/
     }
+
     reactions
   }
 
@@ -91,10 +91,11 @@ class MillController @Inject()(cc: ControllerComponents)(implicit system: ActorS
     val fieldID = json("field").toString().replace("\"", "").toInt
     val field = gameController.getField(fieldID)
     field match {
-      case Some(value) => Json.obj("type" -> "fieldStatus", "id" -> fieldID ,"status" -> value.fieldStatus.toString).toString()//JsString(value.fieldStatus.toString)).toString()
+      case Some(value) => Json.obj("type" -> "fieldStatus", "id" -> fieldID, "status" -> value.fieldStatus.toString).toString() //JsString(value.fieldStatus.toString)).toString()
       case None => Json.obj("type" -> "fieldStatus", "status" -> "Empty").toString()
     }
   }
+
   //TODO: vue js methods
   //https://github.com/Luckytama/Play-Empire/blob/master/app/controllers/EmpireController.scala
   //https://github.com/Luckytama/Play-Empire/blob/master/public/javascripts/game_page.js
@@ -156,5 +157,10 @@ class MillController @Inject()(cc: ControllerComponents)(implicit system: ActorS
 
   def rules: Action[AnyContent] = Action { implicit request =>
     Ok(views.html.rules(gameController))
+  }
+
+
+  def login: Action[AnyContent] = Action { implicit request =>
+    Ok(views.html.login(gameController))
   }
 }

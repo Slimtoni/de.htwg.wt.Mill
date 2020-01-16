@@ -20,7 +20,11 @@
 
         <link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/bootstrap.min.css")" >
         <link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/main.css")" >
-
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.11.2/css/all.css">
+        <!-- Bootstrap core CSS -->
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+<!-- Material Design Bootstrap -->
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.10.1/css/mdb.min.css" rel="stylesheet">
         <link rel="shortcut icon" type="image/png" href="@routes.Assets.versioned("images/favicon.png")">
 
     </head>
@@ -30,12 +34,40 @@
          * the page content. *@
         <div id="mill-app">
         @content
+        <mill-footer></mill-footer>
         </div>
-        @footer()
+
+
         <script src="@routes.Assets.versioned("javascripts/jquery-3.3.1.min.js")"></script>
         <script src="@routes.Assets.versioned("javascripts/bootstrap.min.js")" ></script>
+        <!-- JQuery -->
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+        <!-- Bootstrap tooltips -->
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.4/umd/popper.min.js"></script>
+        <!-- Bootstrap core JavaScript -->
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+        <!-- MDB core JavaScript -->
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.10.1/js/mdb.min.js"></script>
 
         <script src="@routes.Assets.versioned("javascripts/mill.js")"></script>
 
     </body>
 </html>
+<script>
+    import Footer from "../assets/components/MillFooter";
+    export default {
+        components: {Footer}
+    }
+</script>
+<script>
+    import Footer from "../assets/components/MillFooter";
+    export default {
+        components: {Footer}
+    }
+</script>
+<script>
+    import MillFooter from "../assets/components/MillFooter";
+    export default {
+        components: {MillFooter}
+    }
+</script>
