@@ -3,6 +3,7 @@ window.Vue = require('vue');
 //import vue components
 import MillButton from "./components/MillButton";
 import MillBox from "./components/MillBox";
+import StatusPanel from "./components/StatusPanel";
 import Gameboard from "./components/Gameboard";
 
 $(document).ready(function () {
@@ -15,6 +16,7 @@ $(document).ready(function () {
         components: {
             MillButton,
             MillBox,
+            StatusPanel,
             Gameboard
         },
         data: {
@@ -58,6 +60,7 @@ $(document).ready(function () {
             playerBlackLostMen: undefined,
 
             foundMill: false,
+            gameRunning: false,
 
             /* deprecated */
             playerPhase: "",
@@ -172,6 +175,7 @@ $(document).ready(function () {
                             app.gameboard[i]["status"] = "empty";
                         }
                     }
+                    app.gameRunning = msg.gameRunning
                 } else if (msg.type === "performTurn") {
                     if (msg.result === "200") {
                         app.updateGameboard();

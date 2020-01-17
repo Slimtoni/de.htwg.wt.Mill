@@ -28,7 +28,7 @@
                         if (this.$root.playerOnTurnPhase === "Place") {
                             this.$root.performTurn(this.id, undefined);
                             this.$root.checkMill(this.id);
-                            await this.$root.sleep(50);
+                            await this.$root.sleep(200);
                             if (!this.$root.foundMill) {
                                 console.log("No Mill found!!!");
                                 await this.$root.sleep(50);

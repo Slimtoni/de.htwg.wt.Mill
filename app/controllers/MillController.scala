@@ -9,6 +9,7 @@ import javax.inject._
 import play.api.libs.json._
 import play.api.libs.streams.ActorFlow
 import play.api.mvc._
+import scala.concurrent.{Promise, Future}
 
 import scala.swing.Reactor
 
@@ -17,6 +18,8 @@ import scala.swing.Reactor
 class MillController @Inject()(cc: ControllerComponents)(implicit system: ActorSystem, mat: Materializer) extends AbstractController(cc) {
 
   val gameController: ControllerMill = NineMensMorris.controller
+
+  def gameStarted: Boolean = gameController.gameStarted
 
   def millAsText: String = gameController.gameboardToString
 
@@ -53,7 +56,8 @@ class MillController @Inject()(cc: ControllerComponents)(implicit system: ActorS
       ),
       "gameboard" -> Json.obj(
         "vertexList" -> JsString(vertexJson)
-      )
+      ),
+      "gameRunning" -> JsBoolean(gameStarted)
     )
   }
 
@@ -97,6 +101,7 @@ class MillController @Inject()(cc: ControllerComponents)(implicit system: ActorS
   }
 
   def mill: Action[AnyContent] = Action { implicit request =>
+    gameController.gameStarted = false
     Ok(views.html.mill(gameController))
   }
 
