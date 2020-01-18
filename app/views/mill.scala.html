@@ -15,7 +15,6 @@
 
 @main("Nine Mens Morris") {
     <div class="container">
-            @navbar()
         <div class="jumbotron header-jumbotron d-flex flex-column justify-content-center align-items-center">
             <h1 class="display-4">Welcome to Nine Mens Morris!</h1>
             <h2 class="display-6" id="currentPlayer"> @currentPlayer </h2>
@@ -25,3 +24,9 @@
         <gameboard :gameboard="gameboard"></gameboard>
     </div>
 }
+<script>
+    import Navbar from "../assets/components/Navbar";
+    export default {
+        components: {Navbar}
+    }
+</script>

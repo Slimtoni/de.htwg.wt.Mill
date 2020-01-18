@@ -114,13 +114,8 @@
 
     import MillButton from "./MillButton";
 
-    let csrf = $('input[name="csrfToken"]').attr("value");
-    //app.loadPlayer();
-    //app.getFieldStatus();
-    console.log(csrf);
     $.ajaxSetup({
         headers: {
-            'X-CSRF-TOKEN': csrf,
             'Content-Type': 'application/json',
             //'Accept': 'application/json'
         }
@@ -141,18 +136,18 @@
         methods: {
             login: function () {
                 console.log("login");
-                if (this.loginemail.length > 6 && this.loginpassword.length > 8) {
+                if (this.loginemail.length > 6 && this.loginpassword.length >= 8) {
                     $.post("http://localhost:9000/login",
                         JSON.stringify({
                             email: this.loginemail,
                             password: this.loginpassword
                         }),
                     )
-                        .done(function (data, status) {
-                            if (status === 200) {
+                        .done(function (data, status, xhr) {
+                            if (xhr.status === 200) {
                                 console.log("login successful");
                                 window.location.replace("http://localhost:9000/")
-                            } else if (status === 400) {
+                            } else if (xhr.status === 400) {
                                 console.log("login not successful");
                             } else {
                                 console.log("error");
@@ -166,7 +161,7 @@
 
             register: function () {
                 console.log("register");
-                if (this.registerusername.length > 3 && this.registeremail.length > 6 && this.registerpassword.length > 8) {
+                if (this.registerusername.length >= 3 && this.registeremail.length > 6 && this.registerpassword.length >= 8) {
                     $.post("http://localhost:9000/register",
                         JSON.stringify({
                             username: this.registerusername,
@@ -174,23 +169,20 @@
                             password: this.registerpassword
                         }),
                     )
-                        .done(function (data, status) {
-                            if (status === 200 || status === "success") {
+                        .done(function (data, status, xhr) {
+                            if (xhr.status) {
                                 console.log("register successful");
-                            } else if (status === 400) {
+                                window.location.replace("http://localhost:9000/loginpage");
+                            } else if (xhr.status === 400) {
                                 console.log("register not possible")
                             } else {
                                 console.log("error");
-                                $.get("http://localhost:9000/");
                             }
                         })
                         .fail(function (data) {
                             console.log("request failed");
                             console.log("faildata " + data);
-
                         })
-
-
                 } else {
                     console.log("register error");
                 }
