@@ -9,7 +9,6 @@ import MillFooter from "./components/MillFooter";
 import Navbar from "./components/Navbar";
 import Rules from "./components/Rules";
 import MillLoginPage from "./components/MillLoginPage";
-import axios from "axios";
 
 
 $(document).ready(function () {
@@ -22,12 +21,11 @@ $(document).ready(function () {
         components: {
             MillButton,
             MillBox,
-
             Gameboard,
             MillFooter,
             Rules,
             Navbar,
-            MillLoginPage
+            MillLoginPage,
             StatusPanel,
         },
         data: {

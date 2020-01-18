@@ -15,7 +15,6 @@
 
 @main("Nine Mens Morris") {
     <div class="container">
-            @navbar()
         <status-panel v-if="$root.gameRunning === undefined"></status-panel>
         <div v-else class="jumbotron header-jumbotron d-flex flex-column justify-content-center align-items-center">
 
@@ -27,5 +26,4 @@
 
         <gameboard :gameboard="gameboard"></gameboard>
     </div>
-
 }
