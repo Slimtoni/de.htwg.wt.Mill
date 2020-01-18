@@ -3,6 +3,7 @@ window.Vue = require('vue');
 //import vue components
 import MillButton from "./components/MillButton";
 import MillBox from "./components/MillBox";
+import StatusPanel from "./components/StatusPanel";
 import Gameboard from "./components/Gameboard";
 import MillFooter from "./components/MillFooter";
 import Navbar from "./components/Navbar";
@@ -21,13 +22,13 @@ $(document).ready(function () {
         components: {
             MillButton,
             MillBox,
+
             Gameboard,
             MillFooter,
             Rules,
             Navbar,
             MillLoginPage
-
-
+            StatusPanel,
         },
         data: {
             gameboard: [
@@ -57,22 +58,31 @@ $(document).ready(function () {
                 {id: 23, x: 599, y: 602, status: "empty"}
             ],
             playerOnTurn: "",
+            playerOnTurnPhase: undefined,
+
+            playerWhite: "",
+            playerWhitePhase: "",
+            playerWhitePlacedMen: undefined,
+            playerWhiteLostMen: undefined,
+
+            playerBlack: "",
+            playerBlackPhase: "",
+            playerBlackPlacedMen: undefined,
+            playerBlackLostMen: undefined,
+
+            foundMill: false,
+            gameRunning: false,
+
+            /* deprecated */
             playerPhase: "",
             currentFieldID: undefined,
             currentField: undefined,
             currentFieldStatus: "",
             startField: undefined,
             targetField: undefined,
-            foundMill: false,
             performTurnResult: ""
         },
         methods: {
-            getFieldStatus: function (id) {
-                let data = {};
-                data.function = "getFieldStatus";
-                data.field = id;
-                websocket.send(JSON.stringify(data));
-            },
             performTurn: function (start, target) {
                 let data = {};
                 data.function = "performTurn";
@@ -89,13 +99,13 @@ $(document).ready(function () {
             checkMill: function (fieldID) {
                 let data = {};
                 data.function = "checkMill";
-                data.field = parseInt($(fieldID).attr("id").slice(5, 7));
+                data.field = fieldID;
                 websocket.send(JSON.stringify(data));
             },
             caseOfMill: function (fieldID) {
                 let data = {};
                 data.function = "caseOfMill";
-                data.field = parseInt($(fieldID).attr("id").slice(5, 7));
+                data.field = fieldID;
                 websocket.send(JSON.stringify(data));
             },
             endPlayersTurn: function () {
@@ -103,27 +113,17 @@ $(document).ready(function () {
                 data.function = "endPlayersTurn";
                 websocket.send(JSON.stringify(data));
             },
-            loadPlayer: function () {
+            updateGameboard: function () {
                 let data = {};
-                data.function = "loadPlayer";
+                data.function = "updateGameboard";
                 websocket.send(JSON.stringify(data));
-            },
-            updateField: function () {
-                let field = this.currentField;
-                this.getFieldStatus();
-                console.log("FieldID is " + this.currentFieldID.toString())
-                console.log("CurrentFieldStatus is " + this.currentFieldStatus)
-                if (this.currentFieldStatus === "White") {
-                    field.attr("xlink:href", "#white");
-                } else if (this.currentFieldStatus === "Black") {
-                    field.attr("xlink:href", "#black");
-                } else {
-                    field.attr("xlink:href", "#empty");
-                }
             },
             killMan: function (fieldID) {
                 this.getFieldStatus(fieldID);
                 this.updateField(fieldID);
+            },
+            sleep: function (milliseconds) {
+                return new Promise(resolve => setTimeout(resolve, milliseconds));
             }
         },
 
@@ -141,9 +141,8 @@ $(document).ready(function () {
 
     function connectWebSocket() {
 
-        //websocket.setTimeout;
-
         websocket.onopen = function () {
+            app.updateGameboard();
             console.log("Connected to Socket");
         };
 
@@ -158,24 +157,59 @@ $(document).ready(function () {
         websocket.onmessage = function (event) {
             if (typeof event.data === "string") {
                 let msg = JSON.parse(event.data);
-                console.log("Message: " + msg.type)
-                if (msg.type === "loadPlayer") {
-                    app.playerOnTurn = msg.player.name;
-                    app.playerPhase = msg.player.phase;
-                } else if (msg.type === "fieldStatus") {
-                    app.gameboard[msg.id]["status"] = msg.status.toLowerCase()
-                    console.log("Field " + msg.id + " FieldStatus "+ msg.status);
+                console.log("Message: " + msg.type);
+                if (msg.type === "updateGameboard") {
+                    app.playerWhite = msg.game.Players.player1.name;
+                    app.playerWhitePhase = msg.game.Players.player1.phase;
+                    app.playerWhitePlacedMen = msg.game.Players.player1.placedMen;
+                    app.playerWhiteLostMen = msg.game.Players.player1.lostMen;
+
+                    app.playerBlack = msg.game.Players.player2.name;
+                    app.playerBlackPhase = msg.game.Players.player2.phase;
+                    app.playerBlackPlacedMen = msg.game.Players.player2.placedMen;
+                    app.playerBlackLostMen = msg.game.Players.player2.lostMen;
+
+                    app.playerOnTurn = msg.game.Players.playerOnTurn.name;
+                    if (app.playerOnTurn === app.playerWhite) {
+                        app.playerOnTurnPhase = app.playerWhitePhase;
+                    } else {
+                        app.playerOnTurnPhase = app.playerBlackPhase;
+                    }
+
+                    let gameboardString = msg.game.gameboard.vertexList;
+                    for (let i = 0; i < gameboardString.length; i++) {
+                        if (gameboardString.charAt(i) === "W") {
+                            app.gameboard[i]["status"] = "white";
+                        } else if (gameboardString.charAt(i) === "B") {
+                            app.gameboard[i]["status"] = "black";
+                        } else {
+                            app.gameboard[i]["status"] = "empty";
+                        }
+                    }
+                    app.gameRunning = msg.gameRunning
                 } else if (msg.type === "performTurn") {
-                    app.performTurnResult = msg.result;
-                    console.log("result " + app.performTurnResult);
-                    if (app.performTurnResult === "200") {
+                    if (msg.result === "200") {
+                        app.updateGameboard();
+                    } else {
+                        console.log("func performTurn returned with Error: " + msg.result)
+                    }
+                } else if (msg.type === "checkMill") {
+                    if (msg.foundMill === "true") {
+                     app.foundMill = true;
+                    } else {
+                        app.foundMill = false;
+                        console.log("No Mill found!!!");
+                    }
+                } else if (msg.type === "caseOfMill") {
+                    if (msg.result === "200") {
+                        app.updateGameboard();
+                    } else {
+                        console.log("func caseOfMill returned with Error: " + msg.result);
                     }
                 }
             }
         }
     }
-
-
     /*$('.field').click(async function () {
         //console.log("Field " + $(this).data().id + " clicked!")
         app.currentFieldID = parseInt($(this).attr("id").slice(5, 7));

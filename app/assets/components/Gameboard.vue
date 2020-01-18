@@ -47,7 +47,9 @@
         props: {
             gameboard: {
                 type: Array
-            }
+            },
+            firstClick: true,
+            clickOne: 0
         },
         components: {
             Field
