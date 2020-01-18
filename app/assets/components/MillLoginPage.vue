@@ -15,20 +15,21 @@
                     <div class="modal-body mx-3">
                         <div class="md-form mb-5">
                             <i class="fas fa-envelope prefix "></i>
-                            <input type="email" id="defaultForm-email" class="form-control validate">
-                            <label data-error="no valid email" data-success="right" for="defaultForm-email">
+                            <input type="email" id="login-email" class="form-control validate" v-model="loginemail">
+                            <label data-error="no valid email" data-success="right" for="login-email">
                                 Email </label>
                         </div>
 
                         <div class="md-form mb-4">
                             <i class="fas fa-lock prefix"></i>
-                            <input type="password" id="defaultForm-pass" class="form-control validate">
+                            <input type="password" id="login-password" v-model="loginpassword"
+                                   class="form-control validate">
                             <label data-error="no valid password" data-success="right"
-                                   for="defaultForm-pass">Password</label>
+                                   for="login-password">Password</label>
                         </div>
                     </div>
                     <div class="modal-footer d-flex justify-content-center">
-                        <button class="btn-primary">Login</button>
+                        <button v-on:click="login" class="btn-primary">Login</button>
                     </div>
                 </div>
             </div>
@@ -48,27 +49,30 @@
                     <div class="modal-body mx-3">
                         <div class="md-form mb-5">
                             <i class="fas fa-user prefix"></i>
-                            <input type="text" id="orangeForm-name" class="form-control validate">
+                            <input type="text" id="registerusername" v-model="registerusername"
+                                   class="form-control validate">
                             <label data-error="no valid name" data-success="right"
-                                   for="orangeForm-name">Username</label>
+                                   for="registerusername">Username (3 Symbols min)</label>
                         </div>
                         <div class="md-form mb-5">
                             <i class="fas fa-envelope prefix"></i>
-                            <input type="email" id="orangeForm-email" class="form-control validate">
-                            <label data-error="no valid email" data-success="right" for="orangeForm-email">Your
+                            <input type="email" id="registeremail" v-model="registeremail"
+                                   class="form-control validate">
+                            <label data-error="no valid email" data-success="right" for="registeremail">Your
                                 email</label>
                         </div>
 
                         <div class="md-form mb-4">
                             <i class="fas fa-lock prefix "></i>
-                            <input type="password" id="orangeForm-pass" class="form-control validate">
-                            <label data-error="no valid password" data-success="right" for="orangeForm-pass">Your
-                                password</label>
+                            <input type="password" id="registerpassword" v-model="registerpassword"
+                                   class="form-control validate">
+                            <label data-error="no valid password" data-success="right" for="registerpassword">Your
+                                password (8 Symbols min)</label>
                         </div>
 
                     </div>
                     <div class="modal-footer d-flex justify-content-center">
-                        <button class="btn-primary">Sign up</button>
+                        <button v-on:click="register" class="btn-primary">Sign up</button>
                     </div>
                 </div>
             </div>
@@ -107,11 +111,93 @@
 </template>
 
 <script>
+
     import MillButton from "./MillButton";
 
+    let csrf = $('input[name="csrfToken"]').attr("value");
+    //app.loadPlayer();
+    //app.getFieldStatus();
+    console.log(csrf);
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': csrf,
+            'Content-Type': 'application/json',
+            //'Accept': 'application/json'
+        }
+    });
+
+
     export default {
-        components: {MillButton}
+        components: {MillButton},
+        data() {
+            return {
+                loginemail: '',
+                loginpassword: '',
+                registerusername: '',
+                registeremail: '',
+                registerpassword: ''
+            }
+        },
+        methods: {
+            login: function () {
+                console.log("login");
+                if (this.loginemail.length > 6 && this.loginpassword.length > 8) {
+                    $.post("http://localhost:9000/login",
+                        JSON.stringify({
+                            email: this.loginemail,
+                            password: this.loginpassword
+                        }),
+                    )
+                        .done(function (data, status) {
+                            if (status === 200) {
+                                console.log("login successful");
+                                window.location.replace("http://localhost:9000/")
+                            } else if (status === 400) {
+                                console.log("login not successful");
+                            } else {
+                                console.log("error");
+                            }
+
+                        })
+                } else {
+                    console.log("login error");
+                }
+            },
+
+            register: function () {
+                console.log("register");
+                if (this.registerusername.length > 3 && this.registeremail.length > 6 && this.registerpassword.length > 8) {
+                    $.post("http://localhost:9000/register",
+                        JSON.stringify({
+                            username: this.registerusername,
+                            email: this.registeremail,
+                            password: this.registerpassword
+                        }),
+                    )
+                        .done(function (data, status) {
+                            if (status === 200 || status === "success") {
+                                console.log("register successful");
+                            } else if (status === 400) {
+                                console.log("register not possible")
+                            } else {
+                                console.log("error");
+                                $.get("http://localhost:9000/");
+                            }
+                        })
+                        .fail(function (data) {
+                            console.log("request failed");
+                            console.log("faildata " + data);
+
+                        })
+
+
+                } else {
+                    console.log("register error");
+                }
+            }
+        }
     }
+
 </script>
 
 <style>

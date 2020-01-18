@@ -8,8 +8,14 @@ GET     /board                              controllers.MillController.mill
 GET     /start                              controllers.MillController.startGame
 GET     /rules                              controllers.MillController.rules
 GET     /player                             controllers.MillController.playerOnTurnAPI
-GET     /login                              controllers.MillController.login
+GET     /loginpage                          controllers.MillController.loginPage
+
+GET     /test                               controllers.MillController.test
+
 #+nocsrf
+POST    /register                           controllers.MillController.register
+POST    /login                              controllers.MillController.login
+
 #POST    /turn                               controllers.MillController.performTurn
 +nocsrf
 POST    /checkMill                          controllers.MillController.checkMill

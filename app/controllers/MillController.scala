@@ -74,6 +74,10 @@ class MillController @Inject()(cc: ControllerComponents)(implicit system: ActorS
     Ok(views.html.mill(gameController))
   }
 
+  def test: Action[AnyContent] = Action {
+    Ok("i love login")
+  }
+
   def getField: Action[JsValue] = Action(parse.json) { implicit request =>
     val field = gameController.getField((request.body \ "field").as[Int])
     field match {
@@ -85,6 +89,19 @@ class MillController @Inject()(cc: ControllerComponents)(implicit system: ActorS
       }
       case None => Status(400)
     }
+  }
+
+  def register(): Action[JsValue] = Action(parse.json) { implicit request =>
+    //checks
+    val username = request.body \ "username"
+    val email = request.body \ "email"
+    val password = request.body \ "password"
+    Status(200)
+  }
+
+  def login(): Action[JsValue] = Action(parse.json) { implicit request =>
+    //checks
+    Status(200)
   }
 
   def getFieldStatus(json: JsValue): String = {
@@ -160,7 +177,7 @@ class MillController @Inject()(cc: ControllerComponents)(implicit system: ActorS
   }
 
 
-  def login: Action[AnyContent] = Action { implicit request =>
+  def loginPage: Action[AnyContent] = Action { implicit request =>
     Ok(views.html.login(gameController))
   }
 }
