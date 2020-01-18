@@ -1,7 +1,5 @@
 <template>
-
     <div class="container">
-
         <h1>Rules</h1>
         <mill-box :description="'There are 3 phases in the game.'"
                   :list="[{id:1, text: 'Place'}, {id:2, text:'Move'},{id:3, text:'Fly'} ]"></mill-box>
@@ -84,7 +82,8 @@
         margin: auto;
         width: 50%;
         padding: 10px;
-
+        min-height: 100%;
+        position: relative;
     }
 
     #img {

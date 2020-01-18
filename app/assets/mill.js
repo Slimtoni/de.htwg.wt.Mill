@@ -8,7 +8,6 @@ import MillFooter from "./components/MillFooter";
 import Navbar from "./components/Navbar";
 import Rules from "./components/Rules";
 import MillLoginPage from "./components/MillLoginPage";
-import VueJSModal from "vue-js-modal";
 
 $(document).ready(function () {
     let websocket = new WebSocket("ws://localhost:9000/websocket");
