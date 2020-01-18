@@ -3,14 +3,14 @@ package controllers
 import akka.actor.{Actor, ActorRef, ActorSystem, Props}
 import akka.stream.Materializer
 import de.htwg.se.NineMensMorris.NineMensMorris
-import de.htwg.se.NineMensMorris.controller.controllerComponent.Error
+import de.htwg.se.NineMensMorris.controller.controllerComponent.{Error, FieldChanged, PlayerPhaseChanged, StartNewGame}
 import de.htwg.se.NineMensMorris.controller.controllerComponent.controllerBaseImpl.ControllerMill
 import javax.inject._
 import play.api.libs.json._
 import play.api.libs.streams.ActorFlow
 import play.api.mvc._
-import scala.concurrent.{Promise, Future}
 
+import scala.concurrent.{Future, Promise}
 import scala.swing.Reactor
 
 
@@ -18,6 +18,8 @@ import scala.swing.Reactor
 class MillController @Inject()(cc: ControllerComponents)(implicit system: ActorSystem, mat: Materializer) extends AbstractController(cc) {
 
   val gameController: ControllerMill = NineMensMorris.controller
+
+  var participants: Map[String, ActorRef] = Map.empty[String, ActorRef]
 
   def gameStarted: Boolean = gameController.gameStarted
 
@@ -61,6 +63,16 @@ class MillController @Inject()(cc: ControllerComponents)(implicit system: ActorS
     )
   }
 
+  // https://www.playframework.com/documentation/2.8.x/ScalaWebSockets
+  /*def socket: WebSocket = WebSocket.acceptOrResult[String, String] { request =>
+    Future.successful(request.session.get("user") match {
+      case None => Left(Forbidden)
+      case Some(value) =>
+        Right(ActorFlow.actorRef { out =>
+          MillWebSocketActor.props(out)
+        })
+    })
+  }*/
   def socket: WebSocket = WebSocket.accept[String, String] { request =>
     ActorFlow.actorRef { out =>
       MillWebSocketActor.props(out)
@@ -73,31 +85,43 @@ class MillController @Inject()(cc: ControllerComponents)(implicit system: ActorS
   }
 
   class MillWebSocketActor(out: ActorRef) extends Actor with Reactor {
+    listenTo(gameController)
     override def receive: Receive = {
       case msg: String =>
+        if (participants.contains("Peter")) {
+          participants += "Olaf".->(out)
+        } else {
+          participants += "Peter".->(out)
+        }
+
         val json = Json.parse(msg)
         val functionName = json("function").toString().replace("\"", "")
+        broadcast()
         functionName match {
           case "performTurn" => out ! performTurn(json)
           case "endPlayersTurn" => endPlayersTurn()
-          case "updateGameboard" => out ! updateGameboard()
+          case "updateGameboard" =>
+            broadcast()
+            out ! updateGameboard()
           case "checkMill" => out ! checkMill(json)
           case "caseOfMill" => out ! caseOfMill(json)
         }
-        /*val status = performTurn(Json.parse(msg))
-        out ! status
-        broadcast()*/
+      /*val status = performTurn(Json.parse(msg))
+      out ! status
+      broadcast()*/
     }
-    reactions
+    def broadcast(): Unit = {
+      participants.values.foreach(_ ! updateGameboard())
+    }
+    reactions += {
+      case _: FieldChanged => broadcast()
+      case _: PlayerPhaseChanged => broadcast()
+      case _: StartNewGame => broadcast()
+    }
   }
 
   def updateGameboard(): String = {
     Json.obj("type" -> "updateGameboard", "game" -> gameinfoJson).toString()
-  }
-
-  def broadcast() = Action { _ =>
-    system.actorSelection("akka://system/user/workers/*") ! "refresh"
-    Ok
   }
 
   def mill: Action[AnyContent] = Action { implicit request =>
