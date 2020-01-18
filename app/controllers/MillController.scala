@@ -118,6 +118,7 @@ class MillController @Inject()(cc: ControllerComponents)(implicit system: ActorS
       case _: PlayerPhaseChanged => broadcast()
       case _: StartNewGame => broadcast()
     }
+
   }
 
   def updateGameboard(): String = {
@@ -127,6 +128,10 @@ class MillController @Inject()(cc: ControllerComponents)(implicit system: ActorS
   def mill: Action[AnyContent] = Action { implicit request =>
     gameController.gameStarted = false
     Ok(views.html.mill(gameController))
+  }
+
+  def test: Action[AnyContent] = Action {
+    Ok("i love login")
   }
 
   def getField: Action[JsValue] = Action(parse.json) { implicit request =>
@@ -141,6 +146,31 @@ class MillController @Inject()(cc: ControllerComponents)(implicit system: ActorS
       case None => Status(400)
     }
   }
+
+
+  def register(): Action[JsValue] = Action(parse.json) { implicit request =>
+    //checks
+    val username = request.body \ "username"
+    val email = request.body \ "email"
+    val password = request.body \ "password"
+    Status(200)
+  }
+
+  def login(): Action[JsValue] = Action(parse.json) { implicit request =>
+    //checks
+    Status(200)
+  }
+
+  def getFieldStatus(json: JsValue): String = {
+    val fieldID = json("field").toString().replace("\"", "").toInt
+    val field = gameController.getField(fieldID)
+    field match {
+      case Some(value) => Json.obj("type" -> "fieldStatus", "id" -> fieldID, "status" -> value.fieldStatus.toString).toString() //JsString(value.fieldStatus.toString)).toString()
+      case None => Json.obj("type" -> "fieldStatus", "status" -> "Empty").toString()
+    }
+  }
+
+
 
   //TODO: vue js methods
   //https://github.com/Luckytama/Play-Empire/blob/master/app/controllers/EmpireController.scala
@@ -204,5 +234,10 @@ class MillController @Inject()(cc: ControllerComponents)(implicit system: ActorS
 
   def rules: Action[AnyContent] = Action { implicit request =>
     Ok(views.html.rules(gameController))
+  }
+
+
+  def loginPage: Action[AnyContent] = Action { implicit request =>
+    Ok(views.html.login(gameController))
   }
 }

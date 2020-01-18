@@ -5,6 +5,12 @@ import MillButton from "./components/MillButton";
 import MillBox from "./components/MillBox";
 import StatusPanel from "./components/StatusPanel";
 import Gameboard from "./components/Gameboard";
+import MillFooter from "./components/MillFooter";
+import Navbar from "./components/Navbar";
+import Rules from "./components/Rules";
+import MillLoginPage from "./components/MillLoginPage";
+import axios from "axios";
+
 
 $(document).ready(function () {
     let websocket = new WebSocket("ws://localhost:9000/websocket");
@@ -16,8 +22,13 @@ $(document).ready(function () {
         components: {
             MillButton,
             MillBox,
+
+            Gameboard,
+            MillFooter,
+            Rules,
+            Navbar,
+            MillLoginPage
             StatusPanel,
-            Gameboard
         },
         data: {
             gameboard: [
