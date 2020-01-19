@@ -70,6 +70,7 @@ $(document).ready(function () {
 
             foundMill: false,
             gameRunning: false,
+            participants: [],
 
             /* deprecated */
             playerPhase: "",
@@ -159,12 +160,13 @@ $(document).ready(function () {
                 data.function = "endPlayersTurn";
                 websocket.send(JSON.stringify(data));
             },
-            killMan: function (fieldID) {
-                this.getFieldStatus(fieldID);
-                this.updateField(fieldID);
-            },
             sleep: function (milliseconds) {
                 return new Promise(resolve => setTimeout(resolve, milliseconds));
+            },
+            start: function () {
+                let data = {};
+                data.function = "startGame";
+                websocket.send(JSON.stringify(data));
             }
         },
 
@@ -232,47 +234,4 @@ $(document).ready(function () {
             }
         }
     }
-    /*$('.field').click(async function () {
-        //console.log("Field " + $(this).data().id + " clicked!")
-        app.currentFieldID = parseInt($(this).attr("id").slice(5, 7));
-        app.currentField = $(this);
-        app.startField = $(this);
-        await app.loadPlayer();
-
-        console.log("loaded Player");
-        console.log(app.playerOnTurn + " - " + app.playerPhase);
-
-        if (app.playerOnTurn !== undefined) {
-            console.log(app.foundMill);
-            if (!app.foundMill) {
-                if (app.playerPhase === "Place") {
-                    console.log("White Player wants to place");
-                    app.performTurn();
-                    app.updateField();
-                    //await app.checkMill(app.startField);
-
-                    if (!app.foundMill) {
-                        console.log("No Mill found!!!");
-                        app.endPlayersTurn()
-                    }
-                } else if (app.playerOnTurn.phase === "Move" || app.playerOnTurn.phase === "Fly") {
-                    $('.field').click(function () {
-                        app.targetField = parseInt($(this).atthis.$roottr("id").slice(5, 7));
-                        //app.performTurn(app.startField, app.targetField, app.playerOnTurn);
-                    })
-                }
-                $('#currentPlayer').text(app.playerOnTurn);
-            } else {
-                console.log("Found Mill!");
-                //await app.caseOfMill(app.startField);
-                //await app.updateField(app.startField);
-                //app.endPlayersTurn();
-            }
-            //$('#currentPlayer').text(app.playerOnTurn.player);
-        } else {
-            console.log("Player is undefiend - Start the game");
-        }
-
-
-    });*/
 });

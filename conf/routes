@@ -5,7 +5,6 @@
 # Controller for Mill
 GET     /                                   controllers.MillController.mill
 GET     /board                              controllers.MillController.mill
-GET     /start                              controllers.MillController.startGame
 GET     /rules                              controllers.MillController.rules
 GET     /loginpage                          controllers.MillController.loginPage
 

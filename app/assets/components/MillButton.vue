@@ -1,9 +1,9 @@
 <template>
-    <div v-if="typeof url!== 'undefined'">
-        <a class="btn btn-primary" :href="url" role="button">{{text}}</a>
+    <div v-if="text!== undefined">
+        <a v-on:click="startGame" class="btn btn-primary" role="button">{{text}}</a>
     </div>
     <div v-else-if="typeof target!== 'undefined'">
-        <a class="btn btn-primary" type="button" data-toggle="modal" :data-target="target">{{text}}</a>
+        <a v-on:click="startGame" class="btn btn-primary" type="button" data-toggle="modal" :data-target="target">{{text}}</a>
     </div>
     <div v-else>
         <a> error </a>
@@ -39,9 +39,6 @@
 <script>
     export default {
         props: {
-            url: {
-                type: String
-            },
             text: {
                 type: String
             },
@@ -49,6 +46,12 @@
                 type: String
             }
         },
-        name: "MillButton"
+        name: "MillButton",
+        methods: {
+            startGame: function () {
+                console.log("Start Game clicked!");
+                this.$root.start();
+            }
+        }
     }
 </script>
