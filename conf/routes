@@ -13,6 +13,8 @@ GET     /loginpage                          controllers.MillController.loginPage
 POST    /register                           controllers.MillController.register
 POST    /login                              controllers.MillController.login
 POST    /turn                               controllers.MillController.performTurn
+POST    /check                              controllers.MillController.checkMill
+POST    /caseofmill                         controllers.MillController.caseOfMill
 +nocsrf
 POST    /getField                           controllers.MillController.getField
 

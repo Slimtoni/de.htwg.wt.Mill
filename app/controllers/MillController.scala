@@ -9,8 +9,6 @@ import javax.inject._
 import play.api.libs.json._
 import play.api.libs.streams.ActorFlow
 import play.api.mvc._
-
-import scala.concurrent.{Future, Promise}
 import scala.swing.Reactor
 
 
@@ -103,12 +101,7 @@ class MillController @Inject()(cc: ControllerComponents)(implicit system: ActorS
           case "updateGameboard" =>
             broadcast()
             out ! updateGameboard()
-          case "checkMill" => out ! checkMill(json)
-          case "caseOfMill" => out ! caseOfMill(json)
         }
-      /*val status = performTurn(Json.parse(msg))
-      out ! status
-      broadcast()*/
     }
     def broadcast(): Unit = {
       participants.values.foreach(_ ! updateGameboard())
@@ -205,21 +198,20 @@ class MillController @Inject()(cc: ControllerComponents)(implicit system: ActorS
     }
   }
 
-  def checkMill(json: JsValue): String = {
-    val mill = gameController.checkMill(json("field").toString().replace("\"", "").toInt)
-    mill match {
-      case true => Json.obj("type" -> "checkMill", "foundMill" -> "true").toString()
-      case false => Json.obj("type" -> "checkMill", "foundMill" -> "false").toString()
-      case _ => Json.obj("type" -> "checkMill", "foundMill" -> "false").toString()
+  def checkMill: Action[JsValue] = Action(parse.json) { implicit request =>
+    val err = gameController.checkMill((request.body \ "field").as[Int])
+    err match {
+      case true => Status(200)("true")
+      case false => Status(200)("false")
+      case _ => Status(400)(err.toString)
     }
-
   }
 
-  def caseOfMill(json: JsValue): String = {
-    val err = gameController.caseOfMill(json("field").toString().replace("\"", "").toInt)
+  def caseOfMill: Action[JsValue] = Action(parse.json) { implicit request =>
+    val err = gameController.caseOfMill((request.body \ "field").as[Int])
     err match {
-      case Error.NoError => Json.obj("type" -> "caseOfMill", "result" -> "200").toString()
-      case _ => Json.obj("type" -> "caseOfMill", "result" -> err.toString).toString()
+      case Error.NoError => Status(200)
+      case _ => Status(400)(err.toString)
     }
   }
 

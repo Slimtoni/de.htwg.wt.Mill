@@ -21,18 +21,26 @@
         name: "Field",
         methods: {
             clickHandler: async function () {
+                let error = false;
                 console.log("Field " + this.id + " clicked!");
                 this.$root.updateGameboard();
                 if (this.$root.playerOnTurn !== undefined) {
+
                     if (!this.$root.foundMill) {
                         if (this.$root.playerOnTurnPhase === "Place") {
-                            await this.$root.performTurn(this.id, -1);
-                            this.$root.checkMill(this.id);
-                            //await this.$root.sleep(200);
-                            if (!this.$root.foundMill) {
-                                console.log("No Mill found!!!");
-                                await this.$root.sleep(50);
-                                this.$root.endPlayersTurn()
+                            this.$root.performTurn(this.id, -1).then(function () {
+                                console.log("Perform Turn successfull!")
+                            }).catch(err => {
+                                console.log("Perform Turn returned with Error: " + err);
+                                error = true;
+                            });
+                            if (!error) {
+                                this.$root.checkMill(this.id).then(function () {
+                                    console.log("Check Mill successfull!")
+                                }).catch(err => {
+                                    console.log("Check Mill returned with Error: " + err);
+                                    error = true
+                                })
                             }
                         } else {
                             if (this.$root.firstClick) {
@@ -53,7 +61,7 @@
                                     this.$root.checkMill(this.id);
                                     await this.$root.sleep(50);
                                     if (!this.$root.foundMill) {
-                                        console.log("No Mill found!!!");
+                                        //console.log("No Mill found!!!");
                                         await this.$root.sleep(50);
                                         this.$root.endPlayersTurn()
                                     }
@@ -61,10 +69,12 @@
                             }
                         }
                     } else {
-                        this.$root.caseOfMill(this.id);
-                        await this.$root.sleep(50);
-                        this.$root.foundMill = false;
-                        this.$root.endPlayersTurn();
+                        this.$root.caseOfMill(this.id).then(function () {
+                            console.log("CaseOfMill returned successfull!")
+                        }).catch(err => {
+                            console.log("Perform Turn returned with Error: " + err);
+                            error = true;
+                        });
                     }
                 }
             }

@@ -87,35 +87,72 @@ $(document).ready(function () {
                 websocket.send(JSON.stringify(data));
             },
             performTurn: function (start, target) {
-                return $.ajax({
-                    type: 'POST',
-                    url: '/turn',
-                    data: JSON.stringify({
-                        start: start,
-                        target: target
+                return new Promise(function (resolve, reject) {
+                    $.ajax({
+                        type: 'POST',
+                        url: '/turn',
+                        data: JSON.stringify({
+                            start: start,
+                            target: target
+                        }),
+                        success: function () {
+                            app.updateGameboard();
+                            resolve();
+                        },
+                        error: function () {
+                            console.log("error");
+                            app.updateGameboard();
+                            reject()
+                        }
                     })
-                }).done(function (data, status, xhr) {
-                    if (xhr.status === 200) {
-                        console.log("Update Gameboardf");
-                        this.updateGameboard
-                    } else if (xhr.status === 400) {
-                        console.log("Cant perform turn");
-                    } else {
-                        console.log("error");
-                    }
                 })
             },
             checkMill: function (fieldID) {
-                let data = {};
-                data.function = "checkMill";
-                data.field = fieldID;
-                websocket.send(JSON.stringify(data));
+                return new Promise(function (resolve, reject) {
+                    return $.ajax({
+                        type: 'POST',
+                        url: '/check',
+                        data: JSON.stringify({
+                            field: fieldID
+                        }),
+                        success: function (data) {
+                            if (data === "true") {
+                                app.foundMill = true;
+                                console.log("FoundMill set True. " + this.foundMill);
+                                resolve();
+                            } else {
+                                app.foundMill = false;
+                                app.endPlayersTurn();
+                                resolve();
+                            }
+                        },
+                        error: function (data) {
+                            reject(data);
+                        }
+                    })
+                })
             },
             caseOfMill: function (fieldID) {
-                let data = {};
-                data.function = "caseOfMill";
-                data.field = fieldID;
-                websocket.send(JSON.stringify(data));
+                return new Promise(function (resolve, reject) {
+                    $.ajax({
+                        type: 'POST',
+                        url: '/caseofmill',
+                        data: JSON.stringify({
+                            field: fieldID
+                        }),
+                        success: function () {
+                            app.updateGameboard();
+                            app.foundMill = false;
+                            app.endPlayersTurn();
+                            resolve();
+                        },
+                        error: function () {
+                            console.log("error");
+                            app.updateGameboard();
+                            reject()
+                        }
+                    })
+                })
             },
             endPlayersTurn: function () {
                 let data = {};
@@ -191,19 +228,6 @@ $(document).ready(function () {
                         }
                     }
                     app.gameRunning = msg.gameRunning
-                } else if (msg.type === "checkMill") {
-                    if (msg.foundMill === "true") {
-                     app.foundMill = true;
-                    } else {
-                        app.foundMill = false;
-                        console.log("No Mill found!!!");
-                    }
-                } else if (msg.type === "caseOfMill") {
-                    if (msg.result === "200") {
-                        app.updateGameboard();
-                    } else {
-                        console.log("func caseOfMill returned with Error: " + msg.result);
-                    }
                 }
             }
         }
