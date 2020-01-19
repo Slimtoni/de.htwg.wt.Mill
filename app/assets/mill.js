@@ -81,18 +81,29 @@ $(document).ready(function () {
             performTurnResult: ""
         },
         methods: {
-            performTurn: function (start, target) {
+            updateGameboard: function () {
                 let data = {};
-                data.function = "performTurn";
-                if (typeof data.targetField === "undefined") {
-                    data.start = start;
-                    data.target = -1;
-                    websocket.send(JSON.stringify(data));
-                } else {
-                    data.start = start;
-                    data.target = target;
-                    websocket.send(JSON.stringify(data));
-                }
+                data.function = "updateGameboard";
+                websocket.send(JSON.stringify(data));
+            },
+            performTurn: function (start, target) {
+                return $.ajax({
+                    type: 'POST',
+                    url: '/turn',
+                    data: JSON.stringify({
+                        start: start,
+                        target: target
+                    })
+                }).done(function (data, status, xhr) {
+                    if (xhr.status === 200) {
+                        console.log("Update Gameboardf");
+                        this.updateGameboard
+                    } else if (xhr.status === 400) {
+                        console.log("Cant perform turn");
+                    } else {
+                        console.log("error");
+                    }
+                })
             },
             checkMill: function (fieldID) {
                 let data = {};
@@ -109,11 +120,6 @@ $(document).ready(function () {
             endPlayersTurn: function () {
                 let data = {};
                 data.function = "endPlayersTurn";
-                websocket.send(JSON.stringify(data));
-            },
-            updateGameboard: function () {
-                let data = {};
-                data.function = "updateGameboard";
                 websocket.send(JSON.stringify(data));
             },
             killMan: function (fieldID) {
@@ -185,12 +191,6 @@ $(document).ready(function () {
                         }
                     }
                     app.gameRunning = msg.gameRunning
-                } else if (msg.type === "performTurn") {
-                    if (msg.result === "200") {
-                        app.updateGameboard();
-                    } else {
-                        console.log("func performTurn returned with Error: " + msg.result)
-                    }
                 } else if (msg.type === "checkMill") {
                     if (msg.foundMill === "true") {
                      app.foundMill = true;

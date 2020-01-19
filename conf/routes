@@ -12,7 +12,7 @@ GET     /loginpage                          controllers.MillController.loginPage
 #+nocsrf
 POST    /register                           controllers.MillController.register
 POST    /login                              controllers.MillController.login
-
+POST    /turn                               controllers.MillController.performTurn
 +nocsrf
 POST    /getField                           controllers.MillController.getField
 

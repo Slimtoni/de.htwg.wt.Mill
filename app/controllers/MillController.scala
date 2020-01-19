@@ -98,7 +98,7 @@ class MillController @Inject()(cc: ControllerComponents)(implicit system: ActorS
         val functionName = json("function").toString().replace("\"", "")
         broadcast()
         functionName match {
-          case "performTurn" => out ! performTurn(json)
+          //case "performTurn" => out ! performTurn(json)
           case "endPlayersTurn" => endPlayersTurn()
           case "updateGameboard" =>
             broadcast()
@@ -186,7 +186,7 @@ class MillController @Inject()(cc: ControllerComponents)(implicit system: ActorS
     }
   }
 
-  def performTurn(json: JsValue): String = {
+  /*def performTurn(json: JsValue): String = {
     val startField = json("start").toString().replace("\"", "").toInt
     val targetField = json("target").toString().replace("\"", "").toInt
     val err = gameController.performTurn(startField, targetField)
@@ -194,16 +194,16 @@ class MillController @Inject()(cc: ControllerComponents)(implicit system: ActorS
       case Error.NoError => Json.obj("type" -> "performTurn", "result" -> "200").toString()
       case default => Json.obj("type" -> "performTurn", "result" -> "400").toString()
     }
-  }
+  }*/
 
 
-  /*def performTurn(json: JsValue): Action[JsValue] = Action(parse.json) { implicit request =>
+  def performTurn: Action[JsValue] = Action(parse.json) { implicit request =>
     val err = gameController.performTurn((request.body \ "start").as[Int], (request.body \ "target").as[Int])
     err match {
-      case Error.NoError => Ok("200")
-      case default => Status(400)("Detected error: " + Error.errorMessage(err))
+      case Error.NoError => Status(200)
+      case _ => Status(400)("Detected error: " + Error.errorMessage(err))
     }
-  }*/
+  }
 
   def checkMill(json: JsValue): String = {
     val mill = gameController.checkMill(json("field").toString().replace("\"", "").toInt)
