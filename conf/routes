@@ -5,14 +5,15 @@
 # Controller for Mill
 GET     /                                   controllers.MillController.mill
 GET     /board                              controllers.MillController.mill
-GET     /start                              controllers.MillController.startGame
 GET     /rules                              controllers.MillController.rules
 GET     /loginpage                          controllers.MillController.loginPage
 
 #+nocsrf
 POST    /register                           controllers.MillController.register
 POST    /login                              controllers.MillController.login
-
+POST    /turn                               controllers.MillController.performTurn
+POST    /check                              controllers.MillController.checkMill
+POST    /caseofmill                         controllers.MillController.caseOfMill
 +nocsrf
 POST    /getField                           controllers.MillController.getField
 

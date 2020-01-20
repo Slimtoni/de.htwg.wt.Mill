@@ -70,6 +70,7 @@ $(document).ready(function () {
 
             foundMill: false,
             gameRunning: false,
+            participants: [],
 
             /* deprecated */
             playerPhase: "",
@@ -81,47 +82,96 @@ $(document).ready(function () {
             performTurnResult: ""
         },
         methods: {
-            performTurn: function (start, target) {
+            updateGameboard: function () {
                 let data = {};
-                data.function = "performTurn";
-                if (typeof data.targetField === "undefined") {
-                    data.start = start;
-                    data.target = -1;
-                    websocket.send(JSON.stringify(data));
-                } else {
-                    data.start = start;
-                    data.target = target;
-                    websocket.send(JSON.stringify(data));
-                }
+                data.function = "updateGameboard";
+                websocket.send(JSON.stringify(data));
+            },
+            performTurn: function (start, target) {
+                return new Promise(function (resolve, reject) {
+                    if (start !== undefined || target !== undefined) {
+                        $.ajax({
+                            type: 'POST',
+                            url: '/turn',
+                            data: JSON.stringify({
+                                start: start,
+                                target: target
+                            }),
+                            success: function () {
+                                app.updateGameboard();
+                                resolve();
+                            },
+                            error: function () {
+                                console.log("error");
+                                app.updateGameboard();
+                                reject()
+                            }
+                        })
+                    } else {
+                        reject("start or target undefined")
+                    }
+                })
             },
             checkMill: function (fieldID) {
-                let data = {};
-                data.function = "checkMill";
-                data.field = fieldID;
-                websocket.send(JSON.stringify(data));
+                return new Promise(function (resolve, reject) {
+                    return $.ajax({
+                        type: 'POST',
+                        url: '/check',
+                        data: JSON.stringify({
+                            field: fieldID
+                        }),
+                        success: function (data) {
+                            if (data === "true") {
+                                app.foundMill = true;
+                                console.log("FoundMill set True. " + this.foundMill);
+                                resolve();
+                            } else {
+                                app.foundMill = false;
+                                app.endPlayersTurn();
+                                resolve();
+                            }
+                        },
+                        error: function (data) {
+                            reject(data);
+                        }
+                    })
+                })
             },
             caseOfMill: function (fieldID) {
-                let data = {};
-                data.function = "caseOfMill";
-                data.field = fieldID;
-                websocket.send(JSON.stringify(data));
+                return new Promise(function (resolve, reject) {
+                    $.ajax({
+                        type: 'POST',
+                        url: '/caseofmill',
+                        data: JSON.stringify({
+                            field: fieldID
+                        }),
+                        success: function () {
+                            app.foundMill = false;
+                            app.updateGameboard();
+                            app.endPlayersTurn();
+                            resolve();
+                        },
+                        error: function () {
+                            console.log("error");
+                            app.updateGameboard();
+                            reject()
+                        }
+                    })
+                })
             },
             endPlayersTurn: function () {
                 let data = {};
                 data.function = "endPlayersTurn";
                 websocket.send(JSON.stringify(data));
             },
-            updateGameboard: function () {
-                let data = {};
-                data.function = "updateGameboard";
-                websocket.send(JSON.stringify(data));
-            },
-            killMan: function (fieldID) {
-                this.getFieldStatus(fieldID);
-                this.updateField(fieldID);
-            },
             sleep: function (milliseconds) {
                 return new Promise(resolve => setTimeout(resolve, milliseconds));
+            },
+            startGame: function () {
+                let data = {};
+                data.function = "startGame";
+                this.foundMill = false;
+                websocket.send(JSON.stringify(data));
             }
         },
 
@@ -184,71 +234,12 @@ $(document).ready(function () {
                             app.gameboard[i]["status"] = "empty";
                         }
                     }
-                    app.gameRunning = msg.gameRunning
-                } else if (msg.type === "performTurn") {
-                    if (msg.result === "200") {
-                        app.updateGameboard();
-                    } else {
-                        console.log("func performTurn returned with Error: " + msg.result)
-                    }
-                } else if (msg.type === "checkMill") {
-                    if (msg.foundMill === "true") {
-                     app.foundMill = true;
-                    } else {
-                        app.foundMill = false;
-                        console.log("No Mill found!!!");
-                    }
-                } else if (msg.type === "caseOfMill") {
-                    if (msg.result === "200") {
-                        app.updateGameboard();
-                    } else {
-                        console.log("func caseOfMill returned with Error: " + msg.result);
-                    }
+                    app.gameRunning = msg.game.gameRunning
+                } else if (msg.type === "startGame") {
+                    app.updateGameboard();
+                    console.log("Received startGame Message with data: " + msg.data.participants)
                 }
             }
         }
     }
-    /*$('.field').click(async function () {
-        //console.log("Field " + $(this).data().id + " clicked!")
-        app.currentFieldID = parseInt($(this).attr("id").slice(5, 7));
-        app.currentField = $(this);
-        app.startField = $(this);
-        await app.loadPlayer();
-
-        console.log("loaded Player");
-        console.log(app.playerOnTurn + " - " + app.playerPhase);
-
-        if (app.playerOnTurn !== undefined) {
-            console.log(app.foundMill);
-            if (!app.foundMill) {
-                if (app.playerPhase === "Place") {
-                    console.log("White Player wants to place");
-                    app.performTurn();
-                    app.updateField();
-                    //await app.checkMill(app.startField);
-
-                    if (!app.foundMill) {
-                        console.log("No Mill found!!!");
-                        app.endPlayersTurn()
-                    }
-                } else if (app.playerOnTurn.phase === "Move" || app.playerOnTurn.phase === "Fly") {
-                    $('.field').click(function () {
-                        app.targetField = parseInt($(this).atthis.$roottr("id").slice(5, 7));
-                        //app.performTurn(app.startField, app.targetField, app.playerOnTurn);
-                    })
-                }
-                $('#currentPlayer').text(app.playerOnTurn);
-            } else {
-                console.log("Found Mill!");
-                //await app.caseOfMill(app.startField);
-                //await app.updateField(app.startField);
-                //app.endPlayersTurn();
-            }
-            //$('#currentPlayer').text(app.playerOnTurn.player);
-        } else {
-            console.log("Player is undefiend - Start the game");
-        }
-
-
-    });*/
 });
