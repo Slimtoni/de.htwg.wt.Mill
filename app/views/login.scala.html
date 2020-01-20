@@ -1,5 +1,7 @@
-@(controller: de.htwg.se.NineMensMorris.controller.controllerComponent.ControllerInterface)(implicit request: RequestHeader)
+@(controller: de.htwg.se.NineMensMorris.controller.controllerComponent.ControllerInterface)(implicit flash: Flash)
 @main("Login") {
+
+    @flash.get("info").getOrElse("")
     <mill-login-page></mill-login-page>
 
 }

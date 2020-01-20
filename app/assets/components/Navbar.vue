@@ -9,7 +9,7 @@
             <div class="navbar-nav">
                 <a class="nav-item nav-link " href="/">Home <span class="sr-only">(current)</span></a>
                 <a class="nav-item nav-link" href="/rules">Rules</a>
-                <a class="nav-item nav-link" href="/loginpage">Logout</a>
+                <a class="nav-item nav-link" href="/logout">Logout</a>
             </div>
         </div>
     </nav>
@@ -24,7 +24,6 @@
 </script>
 
 <style>
-
     .navbar {
         text-align: center;
         background-color: lightgrey;
