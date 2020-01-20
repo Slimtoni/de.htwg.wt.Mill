@@ -12,8 +12,6 @@ import models.{Global, UserDao}
 import play.api.libs.json._
 import play.api.libs.streams.ActorFlow
 import play.api.mvc._
-
-
 import scala.swing.Reactor
 
 
@@ -97,22 +95,25 @@ class MillController @Inject()(cc: ControllerComponents, authenticatedUserAction
         } else {
           participants += "Peter".->(out)
         }
-
         val json = Json.parse(msg)
         val functionName = json("function").toString().replace("\"", "")
-        //broadcast()
+
+        broadcast()
+
         functionName match {
-          case "performTurn" => out ! performTurn(json)
+          //case "performTurn" => out ! performTurn(json)
           case "endPlayersTurn" => endPlayersTurn()
           case "updateGameboard" =>
-          //            broadcast()
-          //            out ! updateGameboard()
+
+                    broadcast()
+                    out ! updateGameboard()
           case "checkMill" => out ! checkMill(json)
           case "caseOfMill" => out ! caseOfMill(json)
+
+            if (gameStarted) broadcast()
+          case "startGame" => out ! start()
+
         }
-      /*val status = performTurn(Json.parse(msg))
-      out ! status
-      broadcast()*/
     }
 
     def broadcast(): Unit = {
@@ -122,7 +123,8 @@ class MillController @Inject()(cc: ControllerComponents, authenticatedUserAction
     reactions += {
       case _: FieldChanged => broadcast()
       case _: PlayerPhaseChanged => broadcast()
-      case _: StartNewGame => broadcast()
+      case _: StartNewGame =>
+        broadcast()
     }
 
   }
@@ -131,8 +133,8 @@ class MillController @Inject()(cc: ControllerComponents, authenticatedUserAction
     Json.obj("type" -> "updateGameboard", "game" -> gameinfoJson).toString()
   }
 
+
   def mill = authenticatedUserAction { implicit request =>
-    gameController.gameStarted = false
     Ok(views.html.mill(gameController))
   }
 
@@ -207,7 +209,7 @@ class MillController @Inject()(cc: ControllerComponents, authenticatedUserAction
     }
   }
 
-  def performTurn(json: JsValue): String = {
+  /*def performTurn(json: JsValue): String = {
     val startField = json("start").toString().replace("\"", "").toInt
     val targetField = json("target").toString().replace("\"", "").toInt
     val err = gameController.performTurn(startField, targetField)
@@ -215,32 +217,31 @@ class MillController @Inject()(cc: ControllerComponents, authenticatedUserAction
       case Error.NoError => Json.obj("type" -> "performTurn", "result" -> "200").toString()
       case default => Json.obj("type" -> "performTurn", "result" -> "400").toString()
     }
-  }
-
-
-  /*def performTurn(json: JsValue): Action[JsValue] = Action(parse.json) { implicit request =>
-    val err = gameController.performTurn((request.body \ "start").as[Int], (request.body \ "target").as[Int])
-    err match {
-      case Error.NoError => Ok("200")
-      case default => Status(400)("Detected error: " + Error.errorMessage(err))
-    }
   }*/
 
-  def checkMill(json: JsValue): String = {
-    val mill = gameController.checkMill(json("field").toString().replace("\"", "").toInt)
-    mill match {
-      case true => Json.obj("type" -> "checkMill", "foundMill" -> "true").toString()
-      case false => Json.obj("type" -> "checkMill", "foundMill" -> "false").toString()
-      case _ => Json.obj("type" -> "checkMill", "foundMill" -> "false").toString()
-    }
 
+  def performTurn: Action[JsValue] = Action(parse.json) { implicit request =>
+    val err = gameController.performTurn((request.body \ "start").as[Int], (request.body \ "target").as[Int])
+    err match {
+      case Error.NoError => Status(200)
+      case _ => Status(400)("Detected error: " + Error.errorMessage(err))
+    }
   }
 
-  def caseOfMill(json: JsValue): String = {
-    val err = gameController.caseOfMill(json("field").toString().replace("\"", "").toInt)
+  def checkMill: Action[JsValue] = Action(parse.json) { implicit request =>
+    val err = gameController.checkMill((request.body \ "field").as[Int])
     err match {
-      case Error.NoError => Json.obj("type" -> "caseOfMill", "result" -> "200").toString()
-      case _ => Json.obj("type" -> "caseOfMill", "result" -> err.toString).toString()
+      case true => Status(200)("true")
+      case false => Status(200)("false")
+      case _ => Status(400)(err.toString)
+    }
+  }
+
+  def caseOfMill: Action[JsValue] = Action(parse.json) { implicit request =>
+    val err = gameController.caseOfMill((request.body \ "field").as[Int])
+    err match {
+      case Error.NoError => Status(200)
+      case _ => Status(400)(err.toString)
     }
   }
 
@@ -249,8 +250,21 @@ class MillController @Inject()(cc: ControllerComponents, authenticatedUserAction
   }
 
   def startGame = authenticatedUserAction { implicit request =>
+
+  def participantsJson(): JsObject = {
+    val participantsString: String = ""
+    if (participants.nonEmpty) {
+      for ((k, _) <- participants) {
+        participantsString.concat(k)
+      }
+    }
+    Json.obj("participants" -> participantsString)
+  }
+
+  def start(): String = {
     gameController.startNewGame()
-    Ok(views.html.mill(gameController))
+    gameController.gameStarted = true
+    Json.obj("type" -> "startGame", "data" -> participantsJson).toString()
   }
 
   def rules = authenticatedUserAction { implicit request =>
