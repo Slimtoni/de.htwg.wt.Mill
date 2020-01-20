@@ -3,19 +3,19 @@ package controllers
 import akka.actor.{Actor, ActorRef, ActorSystem, Props}
 import akka.stream.Materializer
 import de.htwg.se.NineMensMorris.NineMensMorris
-import de.htwg.se.NineMensMorris.controller.controllerComponent.{Error, FieldChanged, PlayerPhaseChanged, StartNewGame}
 import de.htwg.se.NineMensMorris.controller.controllerComponent.controllerBaseImpl.ControllerMill
-import javax.inject._
+import de.htwg.se.NineMensMorris.controller.controllerComponent.{Error, FieldChanged, PlayerPhaseChanged, StartNewGame}
+import javax.inject.{Inject, _}
+import models.{Global, UserDao}
 import play.api.libs.json._
 import play.api.libs.streams.ActorFlow
 import play.api.mvc._
 
-import scala.concurrent.{Future, Promise}
 import scala.swing.Reactor
 
 
 @Singleton
-class MillController @Inject()(cc: ControllerComponents)(implicit system: ActorSystem, mat: Materializer) extends AbstractController(cc) {
+class MillController @Inject()(cc: ControllerComponents, authenticatedUserAction: AuthenticatedUserAction, userDao: UserDao)(implicit system: ActorSystem, mat: Materializer) extends AbstractController(cc) {
 
   val gameController: ControllerMill = NineMensMorris.controller
 
@@ -86,6 +86,7 @@ class MillController @Inject()(cc: ControllerComponents)(implicit system: ActorS
 
   class MillWebSocketActor(out: ActorRef) extends Actor with Reactor {
     listenTo(gameController)
+
     override def receive: Receive = {
       case msg: String =>
         if (participants.contains("Peter")) {
@@ -96,13 +97,13 @@ class MillController @Inject()(cc: ControllerComponents)(implicit system: ActorS
 
         val json = Json.parse(msg)
         val functionName = json("function").toString().replace("\"", "")
-        broadcast()
+        //broadcast()
         functionName match {
           case "performTurn" => out ! performTurn(json)
           case "endPlayersTurn" => endPlayersTurn()
           case "updateGameboard" =>
-            broadcast()
-            out ! updateGameboard()
+          //            broadcast()
+          //            out ! updateGameboard()
           case "checkMill" => out ! checkMill(json)
           case "caseOfMill" => out ! caseOfMill(json)
         }
@@ -110,9 +111,11 @@ class MillController @Inject()(cc: ControllerComponents)(implicit system: ActorS
       out ! status
       broadcast()*/
     }
+
     def broadcast(): Unit = {
       participants.values.foreach(_ ! updateGameboard())
     }
+
     reactions += {
       case _: FieldChanged => broadcast()
       case _: PlayerPhaseChanged => broadcast()
@@ -125,13 +128,9 @@ class MillController @Inject()(cc: ControllerComponents)(implicit system: ActorS
     Json.obj("type" -> "updateGameboard", "game" -> gameinfoJson).toString()
   }
 
-  def mill: Action[AnyContent] = Action { implicit request =>
+  def mill = authenticatedUserAction { implicit request =>
     gameController.gameStarted = false
     Ok(views.html.mill(gameController))
-  }
-
-  def test: Action[AnyContent] = Action {
-    Ok("i love login")
   }
 
   def getField: Action[JsValue] = Action(parse.json) { implicit request =>
@@ -149,16 +148,29 @@ class MillController @Inject()(cc: ControllerComponents)(implicit system: ActorS
 
 
   def register(): Action[JsValue] = Action(parse.json) { implicit request =>
-    //checks
-    val username = request.body \ "username"
-    val email = request.body \ "email"
-    val password = request.body \ "password"
+    val username = (request.body \ "username").as[JsString].value
+    val email = (request.body \ "email").as[JsString].value
+    val password = (request.body \ "password").as[JsString].value
+    val u = models.User(username, email, password)
     Status(200)
   }
 
   def login(): Action[JsValue] = Action(parse.json) { implicit request =>
-    //checks
-    Status(200)
+    val email: String = (request.body \ "email").as[JsString].value
+    val password: String = (request.body \ "password").as[JsString].value
+
+    val u = models.User("test", email, password)
+    val found = userDao.lookupUser(u)
+    if (found) {
+      Redirect(routes.MillController.mill())
+        .withSession(Global.SESSION_KEY -> u.email)
+    } else {
+      Redirect(routes.MillController.loginPage())
+    }
+  }
+
+  def logout: Action[AnyContent] = authenticatedUserAction { implicit request: Request[AnyContent] =>
+    Redirect(routes.MillController.loginPage()).withNewSession
   }
 
   def getFieldStatus(json: JsValue): String = {
@@ -169,7 +181,6 @@ class MillController @Inject()(cc: ControllerComponents)(implicit system: ActorS
       case None => Json.obj("type" -> "fieldStatus", "status" -> "Empty").toString()
     }
   }
-
 
 
   //TODO: vue js methods
@@ -227,12 +238,12 @@ class MillController @Inject()(cc: ControllerComponents)(implicit system: ActorS
     gameController.endPlayersTurn()
   }
 
-  def startGame(): Action[AnyContent] = Action { implicit request =>
+  def startGame = authenticatedUserAction { implicit request =>
     gameController.startNewGame()
     Ok(views.html.mill(gameController))
   }
 
-  def rules: Action[AnyContent] = Action { implicit request =>
+  def rules = authenticatedUserAction { implicit request =>
     Ok(views.html.rules(gameController))
   }
 

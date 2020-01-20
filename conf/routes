@@ -8,6 +8,7 @@ GET     /board                              controllers.MillController.mill
 GET     /start                              controllers.MillController.startGame
 GET     /rules                              controllers.MillController.rules
 GET     /loginpage                          controllers.MillController.loginPage
+GET     /logout                             controllers.MillController.logout
 
 #+nocsrf
 POST    /register                           controllers.MillController.register

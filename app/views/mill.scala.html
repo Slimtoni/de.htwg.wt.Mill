@@ -1,5 +1,5 @@
 @import de.htwg.se.NineMensMorris.model.FieldStatus
-@(controller:de.htwg.se.NineMensMorris.controller.controllerComponent.ControllerInterface)(implicit request: RequestHeader)
+@(controller:de.htwg.se.NineMensMorris.controller.controllerComponent.ControllerInterface)(implicit request: RequestHeader, flash: Flash)
 @board= @{ controller.gameboardToString.replaceAll("[\\r\\n]","<br>").replaceAll(" ","&nbsp;&nbsp;") }
 @currentPlayer= @{ controller.playerOnTurn }
 @size = @{ controller.getVertexList.size }
@@ -14,6 +14,7 @@
 }
 
 @main("Nine Mens Morris") {
+    @flash.get("info").getOrElse("")
     <div class="container">
         <status-panel v-if="$root.gameRunning === undefined"></status-panel>
         <div v-else class="jumbotron header-jumbotron d-flex flex-column justify-content-center align-items-center">
