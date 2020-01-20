@@ -1,5 +1,7 @@
 package controllers
 
+import java.io._
+
 import akka.actor.{Actor, ActorRef, ActorSystem, Props}
 import akka.stream.Materializer
 import de.htwg.se.NineMensMorris.NineMensMorris
@@ -10,6 +12,7 @@ import models.{Global, UserDao}
 import play.api.libs.json._
 import play.api.libs.streams.ActorFlow
 import play.api.mvc._
+
 
 import scala.swing.Reactor
 
@@ -152,8 +155,15 @@ class MillController @Inject()(cc: ControllerComponents, authenticatedUserAction
     val email = (request.body \ "email").as[JsString].value
     val password = (request.body \ "password").as[JsString].value
     val u = models.User(username, email, password)
+    println(u)
+    val jsonuser = Json.obj(
+      "username" -> username,
+      "email" -> email,
+      "password" -> password
+    ).toString()
     Status(200)
   }
+
 
   def login(): Action[JsValue] = Action(parse.json) { implicit request =>
     val email: String = (request.body \ "email").as[JsString].value
