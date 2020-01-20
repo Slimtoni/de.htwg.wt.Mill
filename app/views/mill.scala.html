@@ -14,27 +14,14 @@
 }
 
 @main("Nine Mens Morris") {
-    <div class="container">
-        <status-panel v-if="$root.gameRunning === true"></status-panel>
-        <div v-else class="jumbotron header-jumbotron d-flex flex-column justify-content-center align-items-center">
-            <h1 class="display-4">Welcome to Nine Mens Morris!</h1>
+    <status-panel :gameboard="gameboard" v-if="$root.gameRunning === true"></status-panel>
+    <div v-else class="container">
+        <div class="jumbotron header-jumbotron d-flex flex-column justify-content-center align-items-center">
+            <h1 class="display-4">Welcome to Nine Mens Morris!!</h1>
             <mill-button :text="'Start Game'"></mill-button>
         </div>
-
-        <gameboard :gameboard="gameboard"></gameboard>
     </div>
-}<script>
-    import MillButton from "../assets/components/MillButton";
-    export default {
-        components: {MillButton}
-    }
-</script>
-<script>
-    import MillButton from "../assets/components/MillButton";
-    export default {
-        components: {MillButton}
-    }
-</script>
+}
 <script>
     import MillButton from "../assets/components/MillButton";
     export default {

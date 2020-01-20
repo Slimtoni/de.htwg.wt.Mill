@@ -89,23 +89,27 @@ $(document).ready(function () {
             },
             performTurn: function (start, target) {
                 return new Promise(function (resolve, reject) {
-                    $.ajax({
-                        type: 'POST',
-                        url: '/turn',
-                        data: JSON.stringify({
-                            start: start,
-                            target: target
-                        }),
-                        success: function () {
-                            app.updateGameboard();
-                            resolve();
-                        },
-                        error: function () {
-                            console.log("error");
-                            app.updateGameboard();
-                            reject()
-                        }
-                    })
+                    if (start !== undefined || target !== undefined) {
+                        $.ajax({
+                            type: 'POST',
+                            url: '/turn',
+                            data: JSON.stringify({
+                                start: start,
+                                target: target
+                            }),
+                            success: function () {
+                                app.updateGameboard();
+                                resolve();
+                            },
+                            error: function () {
+                                console.log("error");
+                                app.updateGameboard();
+                                reject()
+                            }
+                        })
+                    } else {
+                        reject("start or target undefined")
+                    }
                 })
             },
             checkMill: function (fieldID) {
@@ -142,8 +146,8 @@ $(document).ready(function () {
                             field: fieldID
                         }),
                         success: function () {
-                            app.updateGameboard();
                             app.foundMill = false;
+                            app.updateGameboard();
                             app.endPlayersTurn();
                             resolve();
                         },
@@ -163,7 +167,7 @@ $(document).ready(function () {
             sleep: function (milliseconds) {
                 return new Promise(resolve => setTimeout(resolve, milliseconds));
             },
-            start: function () {
+            startGame: function () {
                 let data = {};
                 data.function = "startGame";
                 websocket.send(JSON.stringify(data));
@@ -229,7 +233,10 @@ $(document).ready(function () {
                             app.gameboard[i]["status"] = "empty";
                         }
                     }
-                    app.gameRunning = msg.gameRunning
+                    app.gameRunning = msg.game.gameRunning
+                } else if (msg.type === "startGame") {
+                    app.updateGameboard();
+                    console.log("Received startGame Message with data: " + msg.data.participants)
                 }
             }
         }

@@ -93,13 +93,11 @@ class MillController @Inject()(cc: ControllerComponents)(implicit system: ActorS
         }
         val json = Json.parse(msg)
         val functionName = json("function").toString().replace("\"", "")
-        broadcast()
         functionName match {
           //case "performTurn" => out ! performTurn(json)
           case "endPlayersTurn" => endPlayersTurn()
           case "updateGameboard" =>
-            broadcast()
-            out ! updateGameboard()
+            if (gameStarted) broadcast()
           case "startGame" => out ! start()
         }
     }
@@ -109,7 +107,8 @@ class MillController @Inject()(cc: ControllerComponents)(implicit system: ActorS
     reactions += {
       case _: FieldChanged => broadcast()
       case _: PlayerPhaseChanged => broadcast()
-      case _: StartNewGame => broadcast()
+      case _: StartNewGame =>
+        broadcast()
     }
 
   }
@@ -119,7 +118,7 @@ class MillController @Inject()(cc: ControllerComponents)(implicit system: ActorS
   }
 
   def mill: Action[AnyContent] = Action { implicit request =>
-    gameController.gameStarted = false
+    //gameController.startNewGame()
     Ok(views.html.mill(gameController))
   }
 
@@ -231,6 +230,7 @@ class MillController @Inject()(cc: ControllerComponents)(implicit system: ActorS
 
   def start(): String = {
     gameController.startNewGame()
+    gameController.gameStarted = true
     Json.obj("type" -> "startGame", "data" -> participantsJson).toString()
   }
 
