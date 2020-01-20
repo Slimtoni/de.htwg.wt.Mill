@@ -91,16 +91,14 @@ class MillController @Inject()(cc: ControllerComponents)(implicit system: ActorS
         } else {
           participants += "Peter".->(out)
         }
-
         val json = Json.parse(msg)
         val functionName = json("function").toString().replace("\"", "")
-        broadcast()
         functionName match {
           //case "performTurn" => out ! performTurn(json)
           case "endPlayersTurn" => endPlayersTurn()
           case "updateGameboard" =>
-            broadcast()
-            out ! updateGameboard()
+            if (gameStarted) broadcast()
+          case "startGame" => out ! start()
         }
     }
     def broadcast(): Unit = {
@@ -109,7 +107,8 @@ class MillController @Inject()(cc: ControllerComponents)(implicit system: ActorS
     reactions += {
       case _: FieldChanged => broadcast()
       case _: PlayerPhaseChanged => broadcast()
-      case _: StartNewGame => broadcast()
+      case _: StartNewGame =>
+        broadcast()
     }
 
   }
@@ -119,7 +118,7 @@ class MillController @Inject()(cc: ControllerComponents)(implicit system: ActorS
   }
 
   def mill: Action[AnyContent] = Action { implicit request =>
-    gameController.gameStarted = false
+    //gameController.startNewGame()
     Ok(views.html.mill(gameController))
   }
 
@@ -219,9 +218,20 @@ class MillController @Inject()(cc: ControllerComponents)(implicit system: ActorS
     gameController.endPlayersTurn()
   }
 
-  def startGame(): Action[AnyContent] = Action { implicit request =>
+  def participantsJson(): JsObject = {
+    val participantsString: String = ""
+    if (participants.nonEmpty) {
+      for ((k, _) <- participants) {
+        participantsString.concat(k)
+      }
+    }
+    Json.obj("participants" -> participantsString)
+  }
+
+  def start(): String = {
     gameController.startNewGame()
-    Ok(views.html.mill(gameController))
+    gameController.gameStarted = true
+    Json.obj("type" -> "startGame", "data" -> participantsJson).toString()
   }
 
   def rules: Action[AnyContent] = Action { implicit request =>
