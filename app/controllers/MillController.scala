@@ -98,18 +98,11 @@ class MillController @Inject()(cc: ControllerComponents, authenticatedUserAction
         val json = Json.parse(msg)
         val functionName = json("function").toString().replace("\"", "")
 
-        broadcast()
 
         functionName match {
           //case "performTurn" => out ! performTurn(json)
           case "endPlayersTurn" => endPlayersTurn()
           case "updateGameboard" =>
-
-                    broadcast()
-                    out ! updateGameboard()
-          case "checkMill" => out ! checkMill(json)
-          case "caseOfMill" => out ! caseOfMill(json)
-
             if (gameStarted) broadcast()
           case "startGame" => out ! start()
 
@@ -249,22 +242,11 @@ class MillController @Inject()(cc: ControllerComponents, authenticatedUserAction
     gameController.endPlayersTurn()
   }
 
-  def startGame = authenticatedUserAction { implicit request =>
-
-  def participantsJson(): JsObject = {
-    val participantsString: String = ""
-    if (participants.nonEmpty) {
-      for ((k, _) <- participants) {
-        participantsString.concat(k)
-      }
-    }
-    Json.obj("participants" -> participantsString)
-  }
 
   def start(): String = {
     gameController.startNewGame()
     gameController.gameStarted = true
-    Json.obj("type" -> "startGame", "data" -> participantsJson).toString()
+    Json.obj("type" -> "startGame").toString()
   }
 
   def rules = authenticatedUserAction { implicit request =>

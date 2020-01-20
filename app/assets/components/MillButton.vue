@@ -1,24 +1,12 @@
 <template>
     <div v-if="typeof target!== 'undefined'">
-        <div v-if="text === 'Leave Game'">
-            <a v-on:click="leave" class="btn btn-primary btn-sm" role="button">{{text}}</a>
-        </div>
-        <div v-else>
-            <a v-on:click="start" class="btn btn-primary btn-sm" role="button">{{text}}</a>
-        </div>
+        <a class="btn btn-primary" type="button" data-toggle="modal" :data-target="target">{{text}}</a>
     </div>
-
-    <div v-else>
-        <div v-if="text === 'Leave Game'">
-            <a v-on:click="leave" class="btn btn-primary btn-sm" role="button">{{text}}</a>
-        </div>
-        <div v-else-if="text === 'Start Game' || text === 'Restart Game'">
-            <a v-on:click="start" class="btn btn-primary btn-sm" role="button">{{text}}</a>
-        </div>
-        <div v-else>
-            <a v-on:click="start" class="btn btn-primary" type="button" data-toggle="modal" :data-target="target">{{text}}</a>
-        </div>
-
+    <div v-else-if="text === 'Start Game' || text === 'Restart Game'">
+        <a v-on:click="start" class="btn btn-primary btn-sm" role="button">{{text}}</a>
+    </div>
+    <div v-else-if="text === 'Leave Game'">
+        <a v-on:click="leave" class="btn btn-primary btn-sm" role="button">{{text}}</a>
     </div>
 </template>
 

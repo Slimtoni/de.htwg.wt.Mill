@@ -237,7 +237,6 @@ $(document).ready(function () {
                     app.gameRunning = msg.game.gameRunning
                 } else if (msg.type === "startGame") {
                     app.updateGameboard();
-                    console.log("Received startGame Message with data: " + msg.data.participants)
                 }
             }
         }
