@@ -170,6 +170,7 @@ $(document).ready(function () {
             startGame: function () {
                 let data = {};
                 data.function = "startGame";
+                this.foundMill = false;
                 websocket.send(JSON.stringify(data));
             }
         },
