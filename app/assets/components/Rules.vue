@@ -82,7 +82,7 @@
         margin: auto;
         width: 50%;
         padding: 10px;
-        min-height: 100%;
+        min-height: 100vh;
         position: relative;
     }
 

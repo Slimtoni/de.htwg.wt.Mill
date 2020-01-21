@@ -5,7 +5,7 @@
                 <div class="col-4">
                     <mill-button :text="'Leave Game'"></mill-button>
                 </div>
-                <div class="col-4">
+                <div class="col-2">
                     <mill-button class="millbutton restart" :text="'Restart Game'"></mill-button>
                 </div>
             </div>

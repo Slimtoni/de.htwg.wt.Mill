@@ -1,16 +1,13 @@
 /*Game*/
 
 
-.gamecontainer {
-    width: 800px;
-    display:flex;
-    font-size:40px;
-    font-family: "Verdana",Geneva, sans-serif;
-    font-weight: bold;
-    color: black;
-    margin-top: 10px;
-    margin-bottom: 10px;
+#gamecontainer {
 
+
+    font-family: "Verdana", Geneva, sans-serif;
+    color: black;
+    min-height: 100%;
+    position: relative;
 }
 
 
@@ -24,7 +21,8 @@
     background-color: #e05435;
     border: #e05435;
 }
-.btn-primary:hover{
+
+.btn-primary:hover {
     background-color: #5CBBB7;
 }
 
@@ -51,7 +49,7 @@
 }
 
 
-.navbar-light .navbar-nav .nav-link:hover{
+.navbar-light .navbar-nav .nav-link:hover {
     color: #5CBBB7;
 }
 
@@ -60,7 +58,7 @@
     color: black;
 }
 
-.white::after{
+.white::after {
     background: #037CA9;
     width: 33px;
     height: 100px;
@@ -74,7 +72,6 @@
     background-color: black;
     color: white;
 }
-
 
 
 .empty {
@@ -121,9 +118,10 @@ h5 {
 
 }
 
-.navbar-light .navbar-nav .nav-link:hover{
+.navbar-light .navbar-nav .nav-link:hover {
     color: #5CBBB7;
 }
+
 .container {
     width: 70%;
 }
@@ -151,7 +149,7 @@ h5 {
 
 }
 
-.navbar-light .navbar-nav .nav-link:hover{
+.navbar-light .navbar-nav .nav-link:hover {
     color: #5CBBB7;
 }
 
@@ -160,12 +158,14 @@ h5 {
     margin: auto;
 }
 
-.btn-link{
+.btn-link {
     color: #e05435;
 }
-.btn-link:hover{
+
+.btn-link:hover {
     color: #5CBBB7;
 }
+
 .card {
     margin-top: 5px;
     margin-bottom: 5px;
@@ -176,7 +176,8 @@ h5 {
 a {
     color: #e05435;
 }
-a:hover{
+
+a:hover {
     color: #5CBBB7;
 }
 
