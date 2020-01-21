@@ -61,7 +61,7 @@
 
         <h3>Game ending</h3>
         <p>The game ends if one player has only 2 Stones left. The other player wins the game</p>
-        <p>Let's play a <a href="/start"> Game</a></p>
+        <p>Let's play a <a href="/"> Game</a></p>
 
     </div>
 
@@ -82,7 +82,7 @@
         margin: auto;
         width: 50%;
         padding: 10px;
-        min-height: 100%;
+        min-height: 100vh;
         position: relative;
     }
 

@@ -5,7 +5,7 @@
                 <div class="col-4">
                     <mill-button :text="'Leave Game'"></mill-button>
                 </div>
-                <div class="col-4">
+                <div class="col-2">
                     <mill-button class="millbutton restart" :text="'Restart Game'"></mill-button>
                 </div>
             </div>
@@ -45,6 +45,7 @@
                 <gameboard :gameboard="gameboard"></gameboard>
             </div>
             <div class="col">
+
                 <span class="badge" :style="{'background-color': '#FFDE63'}">Yellow</span>
                 <div class="row">
                     <div class="col">

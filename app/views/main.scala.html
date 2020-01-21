@@ -1,11 +1,9 @@
 @*
- * This template is called from the `mainmill` template. This template
- * handles the rendering of the page header and body tags. It takes
- * two arguments, a `String` for the title of the page and an `Html`
- * object to insert into the body of the page.
- *@
-@import views.html.helper.CSRF
-
+* This template is called from the `mainmill` template. This template
+* handles the rendering of the page header and body tags. It takes
+* two arguments, a `String` for the title of the page and an `Html`
+* object to insert into the body of the page.
+*@
 @(title: String)(content: Html)()
 
 <!DOCTYPE html>
@@ -13,57 +11,61 @@
     <head>
 
         @* Here's where we render the page title `String`. *@
-        <title>@title</title>
-            <!-- Bootstrap CSS -->
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>@title</title>
+        <!-- Bootstrap CSS -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-        <link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/bootstrap.min.css")" >
-        <link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/main.css")" >
-        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.11.2/css/all.css">
+    <link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/bootstrap.min.css")" >
+    <link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/main.css")" >
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.11.2/css/all.css">
 
         <!-- Bootstrap core CSS -->
-        <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
         <!-- Material Design Bootstrap -->
-        <link href="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.10.1/css/mdb.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.10.1/css/mdb.min.css" rel="stylesheet">
 
-        <link rel="shortcut icon" type="image/png" href="@routes.Assets.versioned("images/favicon.png")">
+    <link rel="shortcut icon" type="image/png" href="@routes.Assets.versioned("images/favicon.png")">
 
     </head>
     <body>
 
+
         @* And here's where we render the `Html` object containing
-         * the page content. *@
+        * the page content. *@
+    <div id="gamecontainer">
         <div id="mill-app">
             <navbar></navbar>
             @content
-        <mill-footer></mill-footer>
+            <mill-footer></mill-footer>
         </div>
+    </div>
 
-
-        <script src="@routes.Assets.versioned("javascripts/jquery-3.3.1.min.js")"></script>
-        <script src="@routes.Assets.versioned("javascripts/bootstrap.min.js")" ></script>
+    <script src="@routes.Assets.versioned("javascripts/jquery-3.3.1.min.js")"></script>
+    <script src="@routes.Assets.versioned("javascripts/bootstrap.min.js")" ></script>
         <!-- JQuery -->
-        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
         <!-- Bootstrap tooltips -->
-        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.4/umd/popper.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.4/umd/popper.min.js"></script>
         <!-- Bootstrap core JavaScript -->
-        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
         <!-- MDB core JavaScript -->
-        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.10.1/js/mdb.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.10.1/js/mdb.min.js"></script>
 
-        <script src="@routes.Assets.versioned("javascripts/mill.js")"></script>
+    <script src="@routes.Assets.versioned("javascripts/mill.js")"></script>
 
     </body>
 </html>
 <script>
     import MillFooter from "../assets/components/MillFooter";
+
     export default {
         components: {MillFooter}
     }
 </script>
 <script>
     import Navbar from "../assets/components/Navbar";
+
     export default {
         components: {Navbar}
     }
