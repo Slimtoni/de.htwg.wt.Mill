@@ -2,7 +2,7 @@
 
     <nav class="navbar navbar-expand-sm navbar-light">
         <a href="/" class="navbar-brand text-dark">NineMensMorris by Anton &amp; Matthias</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarTogglerDemo01" aria-expanded="false" aria-label="Toggle navigation">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse justify-content-end" id="navbarNavAltMarkup">
@@ -34,6 +34,7 @@
         margin-left: auto;
         margin-right: auto;
         width: 70%;
+        height: 60px;
     }
 
 

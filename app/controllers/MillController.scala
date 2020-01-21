@@ -164,7 +164,7 @@ class MillController @Inject()(cc: ControllerComponents, authenticatedUserAction
     val email: String = (request.body \ "email").as[JsString].value
     val password: String = (request.body \ "password").as[JsString].value
 
-    val u = models.User("test", email, password)
+    val u = models.User("", email, password)
     val found = userDao.lookupUser(u)
     if (found) {
       Redirect(routes.MillController.mill())

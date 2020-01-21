@@ -45,6 +45,7 @@
                 <gameboard :gameboard="gameboard"></gameboard>
             </div>
             <div class="col">
+
                 <span class="badge" :style="{'background-color': '#FFDE63'}">Yellow</span>
                 <div class="row">
                     <div class="col">

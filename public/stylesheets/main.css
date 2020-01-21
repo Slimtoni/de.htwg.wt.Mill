@@ -1,13 +1,18 @@
 /*Game*/
-
+html {
+    height: 100%;
+}
+body {
+    min-height: 100%;
+}
 
 #gamecontainer {
-
-
     font-family: "Verdana", Geneva, sans-serif;
     color: black;
-    min-height: 100%;
-    position: relative;
+}
+
+main {
+    min-height: calc(100% - 100px - 70px);
 }
 
 

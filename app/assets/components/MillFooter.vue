@@ -29,7 +29,7 @@
 <style>
     .footer {
         clear: both;
-        position: absolute;
+        position: relative;
         bottom: 0;
         width: 100%;
         height: 100px;
