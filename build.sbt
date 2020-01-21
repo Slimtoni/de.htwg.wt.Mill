@@ -20,3 +20,4 @@ libraryDependencies += "net.liftweb" %% "lift-json" % "3.4.1"
 enablePlugins(JavaAppPackaging)
 
 herokuAppName in Compile := "webtech-mill"
+herokuJdkVersion in Compile := "11"
