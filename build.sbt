@@ -17,6 +17,6 @@ libraryDependencies += "org.scalatestplus.play" %% "scalatestplus-play" % "3.1.2
 libraryDependencies += "com.h2database" % "h2" % "1.4.196"
 libraryDependencies += "net.liftweb" %% "lift-json" % "3.4.1"
 
+enablePlugins(JavaAppPackaging)
 
-
-
+herokuAppName in Compile := "webtech-mill"
