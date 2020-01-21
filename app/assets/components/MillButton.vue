@@ -55,6 +55,7 @@
             leave: function () {
                 console.log("Leave Game clicked!");
                 this.$root.gameRunning = false;
+                // TODO: informiere Server ueber gameStatus
             }
         }
     }
